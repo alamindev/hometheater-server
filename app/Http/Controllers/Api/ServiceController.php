@@ -78,15 +78,15 @@ class ServiceController extends Controller
     public function ServiceDetails($slug)
     {
 
-      $service =  Service::with('serviceImage', 'reviews')->where('slug', $slug)->first();
+      $service =  Service::with('serviceImage', 'reviews')->where('type', 0)->where('slug', $slug)->first();
         if (!empty($service)) {
-           $service_ids = Service::with('serviceImage')->where('id', '!=', $service->id)->where('category_id', $service->category_id)->pluck('id');
+           $service_ids = Service::with('serviceImage')->where('type', 0)->where('id', '!=', $service->id)->where('category_id', $service->category_id)->pluck('id');
                 if($service->suggestion){
                     $collection = collect($service_ids);
                     $service_ids  = $collection->concat(explode(',', $service->suggestion))->unique();
-                    $suggests = Service::with('serviceImage')->whereIn('id', $service_ids)->get();
+                    $suggests = Service::with('serviceImage')->where('type', 0)->whereIn('id', $service_ids)->get();
                 }else{
-                    $suggests = Service::with('serviceImage')->where('id', '!=', $service->id)->where('category_id', $service->category_id)->inRandomOrder()->get();
+                    $suggests = Service::with('serviceImage')->where('type', 0)->where('id', '!=', $service->id)->where('category_id', $service->category_id)->inRandomOrder()->get();
                 }
             $reviews = [];
             $ids = $service->reviews->pluck('id');

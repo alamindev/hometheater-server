@@ -72,7 +72,7 @@
                         Info </a>
                 </li>
                 <li class="{{ Route::is('website.home.topheader') ? 'active' : '' }}">
-                    <a href="{{ route('website.home.topheader') }}"><i class="menu-icon fa fa-home"></i> Website Meta
+                    <a href="{{ route('website.home.topheader') }}"><i class="menu-icon fa fa-home"></i> Website Global page
                     </a>
                 </li>
 

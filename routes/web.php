@@ -255,6 +255,7 @@ Route::group(['prefix' => 'website-about'], function () {
 Route::group(['prefix' => 'website-info'], function () {
     Route::get('/', [App\Http\Controllers\MetaInfoController::class, 'homepage'])->name('website.info.home');
     Route::get('/service', [App\Http\Controllers\MetaInfoController::class, 'service'])->name('website.info.service');
+    Route::get('/product', [App\Http\Controllers\MetaInfoController::class, 'product'])->name('website.info.product');
     Route::get('/portfolio', [App\Http\Controllers\MetaInfoController::class, 'portfolio'])->name('website.info.portfolio');
     Route::get('/booking', [App\Http\Controllers\MetaInfoController::class, 'booking'])->name('website.info.booking');
     Route::get('/blog', [App\Http\Controllers\MetaInfoController::class, 'blog'])->name('website.info.blog');

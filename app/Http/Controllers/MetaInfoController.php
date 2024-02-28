@@ -19,6 +19,11 @@ class MetaInfoController extends Controller
         $edit = MetaInfo::where('type', 'service')->first();
         return view('website-meta-info.page.service', compact('edit'));
     }
+    public function product()
+    {
+        $edit = MetaInfo::where('type', 'product')->first();
+        return view('website-meta-info.page.product', compact('edit'));
+    }
     public function booking()
     {
         $edit = MetaInfo::where('type', 'booking')->first();
@@ -86,6 +91,8 @@ class MetaInfoController extends Controller
             return redirect()->route('website.info.login');
         } elseif ($type == 'register') {
             return redirect()->route('website.info.register');
+        }elseif ($type == 'product') {
+            return redirect()->route('website.info.product');
         }
     }
 

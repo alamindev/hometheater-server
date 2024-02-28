@@ -69,7 +69,7 @@
                         Info </a>
                 </li>
                 <li class="<?php echo e(Route::is('website.home.topheader') ? 'active' : ''); ?>">
-                    <a href="<?php echo e(route('website.home.topheader')); ?>"><i class="menu-icon fa fa-home"></i> Website Home
+                    <a href="<?php echo e(route('website.home.topheader')); ?>"><i class="menu-icon fa fa-home"></i> Website Global page
                     </a>
                 </li>
 
