@@ -166,7 +166,7 @@ Add new Service
                             <select data-placeholder="Suggestion" multiple name="suggestion[]" id="suggestion"
                                 class="form-control">
                                 <option label="default"></option>
-                                @foreach (App\Models\Service::orderBy('created_at','desc')->get() as $service)
+                                @foreach (App\Models\Service::orderBy('created_at','desc')->where('type', 0)->get() as $service)
                                 <option value="{{ $service->id }}">{{ $service->title }}</option>
                                 @endforeach
                             </select>

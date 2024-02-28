@@ -25,17 +25,7 @@ Service view
                                 <td>:</td>
                                 <td>${{ $view->basic_price }}</td>
                             </tr>
-                            {{-- <tr>
-                                <td>Service Icon</td>
-                                <td>:</td>
-                                <td>
-                                @if($view->type===0)
-                                    <i class="{{ $view->icon }}"></i>
-                                @else
-                                    {!! $view->svg !!}
-                                @endif
-                                </td>
-                            </tr> --}}
+                           
                             <tr>
                                 <td>Service Category</td>
                                 <td>:</td>

@@ -33,7 +33,7 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Service::with('category')->latest()->get();
+            $data = Service::with('category')->where('type', 0)->latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('category', function ($row) {
@@ -91,8 +91,7 @@ class ServiceController extends Controller
         $service->service_type = $request->service_type;
         $service->basic_price = $request->basic_price;
         $service->icon = $request->icon;
-        // $service->type = $request->type;
-        // $service->svg = $request->svg;
+        $service->type = 0;
         $service->details = $request->details;
         $service->seo_details = $request->seo_details;
         $service->keyword = $request->keyword;
@@ -221,9 +220,7 @@ class ServiceController extends Controller
         $service->basic_price = $request->basic_price;
         $service->slug =   Slug::createSlug($request->slug);
         $service->icon = $request->icon;
-        $service->details = $request->details;
-        // $service->type = $request->type;
-        // $service->svg = $request->svg;
+        $service->details = $request->details; 
         $service->seo_details = $request->seo_details;
         $service->keyword = $request->keyword;
         $service->duration = $request->duration;

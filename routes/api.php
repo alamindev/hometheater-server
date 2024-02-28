@@ -86,7 +86,10 @@ Route::post('/post/subscribe',  [App\Http\Controllers\Api\PostController::class,
 Route::get('/service-lists',  [App\Http\Controllers\Api\ServiceController::class, 'ServiceLists']);
 Route::get('/service-header',  [App\Http\Controllers\Api\ServiceController::class, 'ServiceHeader']);
 Route::get('/services-home',  [App\Http\Controllers\Api\HomeController::class, 'Services']);
+
 Route::get('/services',  [App\Http\Controllers\Api\ServiceController::class, 'Services']);
+Route::get('/products',  [App\Http\Controllers\Api\ProductController::class, 'Products']);
+
 Route::get('/service-details/{slug}',  [App\Http\Controllers\Api\ServiceController::class, 'ServiceDetails']);
 Route::get('/review/{id}',  [App\Http\Controllers\Api\ServiceController::class, 'Review']);
 Route::get('/fetch-reviews/{slug}',  [App\Http\Controllers\Api\ServiceController::class, 'FetchReviewPage']);

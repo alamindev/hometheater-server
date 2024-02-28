@@ -10,7 +10,10 @@
                     <a href="{{ route('schedule') }}"><i class="menu-icon fa fa-calendar-check-o"></i> Schedule </a>
                 </li>
                 <li class="{{ Route::is('order') ? 'active' : '' }}">
-                    <a href="{{ route('order') }}"><i class="menu-icon fa fa-bookmark"></i> Order </a>
+                    <a href="{{ route('order') }}"><i class="menu-icon fa fa-bookmark"></i> Booking Orders </a>
+                </li>
+                <li class="{{ Route::is('productorder') ? 'active' : '' }}">
+                    <a href="{{ route('productorder') }}"><i class="menu-icon fa fa-bookmark"></i> Product Orders  </a>
                 </li>
                 <li class="{{ Route::is('zipcode') ? 'active' : '' }}">
                     <a href="{{ route('zipcode') }}"><i class="menu-icon fa fa-grav"></i> Zipcode </a>
@@ -26,6 +29,9 @@
                 </li>
                 <li class="{{ (Route::is('services') || Route::is('service.create')) ? 'active' : '' }}">
                     <a href="{{ route('services') }}"><i class="menu-icon fa fa-server"></i> Services </a>
+                </li>
+                <li class="{{ (Route::is('products') || Route::is('service.create')) ? 'active' : '' }}">
+                    <a href="{{ route('products') }}"><i class="menu-icon fa fa-sliders"></i> Products</a>
                 </li>
                 <li class="{{ (Route::is('users') || Route::is('users.show')) ? 'active' : '' }}">
                     <a href="{{ route('users') }}"><i class="menu-icon fa fa-users"></i> Users </a>
@@ -66,7 +72,7 @@
                         Info </a>
                 </li>
                 <li class="{{ Route::is('website.home.topheader') ? 'active' : '' }}">
-                    <a href="{{ route('website.home.topheader') }}"><i class="menu-icon fa fa-home"></i> Website Home
+                    <a href="{{ route('website.home.topheader') }}"><i class="menu-icon fa fa-home"></i> Website Meta
                     </a>
                 </li>
 

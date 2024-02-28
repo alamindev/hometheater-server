@@ -11,7 +11,12 @@ Order details
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
+                   
+                    @if($order->type === 0)
+                    <h4>Booking Details</h4>
+                    @else 
                     <h4>Order Details</h4>
+                    @endif
                     <a href="{{ url()->previous() }}" class="btn btn-success"> <i class="fa  fa-arrow-left "></i> Back</a>
                 </div>
                 <div class="card-body card-block">
@@ -39,7 +44,11 @@ Order details
                                 @endif
                             </div>
                             <div class="col-lg-6">
+                                @if($order->type === 0)
                                 <h4 class="pb-3">Appointment Booked At: <strong>{{\Carbon\Carbon::parse($order->created_at)->format('d M Y')}} {{ \Carbon\Carbon::parse($order->created_at)->format('g:i A') }}</strong></h4>
+                                @else 
+                                <h4 class="pb-3">Ordered At: <strong>{{\Carbon\Carbon::parse($order->created_at)->format('d M Y')}} {{ \Carbon\Carbon::parse($order->created_at)->format('g:i A') }}</strong></h4>
+                                @endif
                                 <div class="d-flex">
                                     <h4 class="pb-3 pr-5">Price: <strong>${{ $order->price}}</strong></h4>
                                     <h4>Payment: <strong>{{ $order->payment}} Payment</strong></h4>
@@ -65,25 +74,48 @@ Order details
                     </table>
                 </div>
             </div>
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h4>Appointment Date</h4>
+            @if($order->type === 0)
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4>Appointment Date</h4>
+                </div>
+                <div class="card-body card-block">
+                    <table class="table table-bordered">
+                        @foreach($order->orderdate as $key=> $date)
+                        <tr>
+                            <td>Item #{{$key+1}}</td>
+                            <td>:</td>
+                            <td>
+                                <strong>{{\Carbon\Carbon::parse($date->date)->format('d M Y')}}
+                                    {{ \Carbon\Carbon::parse($date->time)->format('g:i A') }}</strong>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </table>
+                </div>
             </div>
-            <div class="card-body card-block">
-                <table class="table table-bordered">
-                    @foreach($order->orderdate as $key=> $date)
-                    <tr>
-                        <td>Item #{{$key+1}}</td>
-                        <td>:</td>
-                        <td>
-                            <strong>{{\Carbon\Carbon::parse($date->date)->format('d M Y')}}
-                                {{ \Carbon\Carbon::parse($date->time)->format('g:i A') }}</strong>
-                        </td>
-                    </tr>
-                    @endforeach
-                </table>
-            </div>
-        </div>
+                    @else 
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4 style="color: red">Deliver Date</h4>
+                        </div>
+                        <div class="card-body card-block">
+                            <div class="row"> 
+                                    @php
+                                        $collection = collect($order->services);
+                                        $ids = $collection->pluck('service_id');
+                                       
+                                        $delivery_time = \App\Models\Service::whereIn('id', $ids)->avg('delivery_time');
+                                        $startDate = carbon\carbon::parse($order->created_at);
+ 
+                                        $date = $startDate->copy()->addDays(round($delivery_time))->format('d M y - h:i:s A');
+                                    @endphp 
+                                <h3 class="px-3 text-danger"><strong>{{ $date  }}</strong></h3>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+        
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>User Details</h4>
@@ -162,6 +194,8 @@ Order details
                     </div>
                 </div>
             </div>
+            @if($order->type === 0)  
+            
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>Service Questions</h4>
@@ -200,6 +234,7 @@ Order details
                     </div>
                 </div>
             </div>
+           
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>User provide images</h4>
@@ -220,7 +255,7 @@ Order details
                     </div>
                 </div>
             </div>
-
+            @endif
         </div>
     </div>
 </div>

@@ -56,7 +56,7 @@ class ServiceController extends Controller
      */
     public function Services()
     {
-        $services =  Service::with('serviceImage')->get();
+        $services =  Service::where('type', 0)->with('serviceImage')->get();
         $service_header = ServiceHeader::select('booking_title', 'booking_details')->first();
         if (count($services) > 0) {
             return response()->json([

@@ -26,7 +26,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Order::with('user', 'quantity')->orderBy('created_at', 'desc')->get();
+            $data = Order::with('user', 'quantity')->where('type', 0)->orderBy('created_at', 'desc')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('photo', function ($row) {
@@ -69,6 +69,53 @@ class OrderController extends Controller
                 ->make(true);
         }
         return view('pages.order.index');
+    }
+    public function product(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Order::with('user', 'quantity')->where('type',1)->orderBy('created_at', 'desc')->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('photo', function ($row) {
+                    if ($row->user->photo) {
+                        return '<img src=' . asset($row->user->photo) . ' width="40" alt="user-image">';
+                    }
+                    return 'No photo';
+                })
+                ->addColumn('username', function ($row) {
+                    return $row->user->first_name . ' ' . $row->user->last_name;
+                })
+                ->addColumn('phone', function ($row) {
+                    return $row->user->phone;
+                })
+                ->addColumn('quantity', function ($row) {
+                    return collect($row->quantity)->pluck('quantity')->sum();
+                })
+                ->addColumn('status', function ($row) {
+
+                    if ($row->status == 'pending') {
+                        $btn = "<span class='badge btn-yellow py-2 px-3 text-capitalize'>$row->status</span>";
+                    } elseif ($row->status == 'complete') {
+                        $btn = "<span class='badge btn-blue py-2 px-3 text-capitalize'>$row->status</span>";
+                    } elseif ($row->status == 'approved') {
+                        $btn = "<span class='badge btn-green py-2 px-3 text-capitalize'>$row->status</span>";
+                    } elseif ($row->status == 'cancel') {
+                        $btn = "<span class='badge btn-red py-2 px-3 text-capitalize'>$row->status</span>";
+                    }
+                    return $btn;
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = '';
+                    $btn = '<a href=' . route("order.details", $row->order_id) . '  class="view btn btn-info btn-blue  btn-sm mr-2">Order Details</a>';
+                    if ($row->status == 'cancel') {
+                        $btn = '<a href=' . route("order.details", $row->order_id) . '  class="view btn btn-info btn-blue  btn-sm mr-2">Order Details</a> <a href="javascript:void(0)"  data-remote=' . route("order.destroy", $row->id) . ' class="delete btn btn-danger btn-sm">Delete</a>';
+                    }
+                    return $btn;
+                })
+                ->rawColumns(['action', 'photo', 'username', 'phone', 'quantity', 'status'])
+                ->make(true);
+        }
+        return view('pages.order.product');
     }
     public function OrderDetails($id)
     {

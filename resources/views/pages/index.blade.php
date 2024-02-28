@@ -87,7 +87,7 @@ Dashboard
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="box-title">Recent Order </h4>
+                            <h4 class="box-title">Recent Service Booking</h4>
                         </div>
                         <div class="card-body--">
                             <div class="table-stats order-table ov-h">
@@ -100,6 +100,7 @@ Dashboard
                                             <th>Name</th>
                                             <th>Customer Phone no.</th>
                                             <th>Quantity</th>
+                                            <th>Date</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -124,6 +125,7 @@ Dashboard
                                             <td>  <span class="name">{{ $order->user->first_name}} {{ $order->user->last_name}}</span> </td>
                                             <td> <span class="product">{{ $order->user->phone }}</span> </td>
                                             <td><span class="count">{{ collect($order->quantity)->pluck('quantity')->sum()}}</span></td>
+                                            <td>{{ \carbon\carbon::parse($order->created_at)->format('d M y h:i:s A')}}</td>
                                             <td>
                                                 @if($order->status == 'pending')
                                                 <span class="badge btn-yellow">{{ $order->status}}</span>
@@ -144,7 +146,75 @@ Dashboard
                                 </table>
                             </div> <!-- /.table-stats -->
                         </div>
-                    </div> <!-- /.card -->
+                    </div> <!-- /.card --> 
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="box-title">Recent Product Order</h4>
+                            </div>
+                            <div class="card-body--">
+                                <div class="table-stats order-table ov-h">
+                                    <table class="table ">
+                                        <thead>
+                                            <tr>
+                                                <th class="serial">#</th>
+                                                <th class="avatar">Avatar</th>
+                                                <th>Order ID</th>
+                                                <th>Name</th>
+                                                <th>Customer Phone no.</th>
+                                                <th>Quantity</th>
+                                                <th>Date</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php
+                                            $i = 1;
+                                            @endphp
+                                            @foreach($products as $order)
+                                            <tr>
+                                                <td class="serial">{{ $i++}}.</td>
+                                                <td class="avatar">
+                                                    <div class="round-img">
+                                                        @if($order->user && $order->user->photo!= null)
+                                                            <img class="rounded-circle" src="{{asset($order->user->photo)}}" alt="">
+                                                            @else
+                                                            <img class="rounded-circle" src="{{asset('storage/uploads/avater.svg')}}" alt="">
+                                                       @endif
+                                                    </div>
+                                                </td>
+                                                <td> #{{$order->order_id}} </td>
+                                                <td>  <span class="name">{{ $order->user->first_name}} {{ $order->user->last_name}}</span> </td>
+                                                <td> <span class="product">{{ $order->user->phone }}</span> </td>
+                                                <td><span class="count">{{ collect($order->quantity)->pluck('quantity')->sum()}}</span></td>
+                                                <td>{{ \carbon\carbon::parse($order->created_at)->format('d M y h:i:s A')}}</td>
+                                                <td>
+                                                    @if($order->status == 'pending')
+                                                    <span class="badge btn-yellow">{{ $order->status}}</span>
+                                                    @elseif($order->status == 'complete')
+                                                        <span class="badge btn-blue">{{ $order->status}}</span>
+                                                    @elseif($order->status == 'approved')
+                                                        <span class="badge btn-green ">{{ $order->status}}</span>
+                                                    @elseif($order->status == 'cancel')
+                                                        <span class="badge btn-red">{{ $order->status}}</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                   <a href="{{route('order.details', $order->order_id)}}" class="btn btn-info btn-blue">Order Details</a>
+                                                </td>
+                                            </tr>
+                                                @endforeach
+                                        </tbody>
+                                    </table>
+                                </div> <!-- /.table-stats -->
+                            </div>
+                        </div> <!-- /.card -->
+                        <div class="card">
+                            <div class="card-body d-flex justify-content-center">
+                                <a href="{{route('order')}}" class="btn btn-success">Show all</a>
+                            </div>
+                        </div> 
+    
                     <div class="card">
                         <div class="card-body d-flex justify-content-center">
                             <a href="{{route('order')}}" class="btn btn-success">Show all</a>
@@ -153,7 +223,7 @@ Dashboard
                 </div>  <!-- /.col-lg-8 -->
 
             </div>
-        </div>
+        </div> 
     </div>
     <!-- .animated -->
 </div>

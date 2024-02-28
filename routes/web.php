@@ -31,11 +31,13 @@ Route::get('/cache-clear', function () {
 });
 Route::redirect('/register', '/login');
 /** for order */
-Route::get('/order', [App\Http\Controllers\OrderController::class, 'index'])->name('order');
+Route::get('/orders', [App\Http\Controllers\OrderController::class, 'index'])->name('order');
+Route::get('/product-orders', [App\Http\Controllers\OrderController::class, 'product'])->name('productorder');
 Route::get('/order/details/{id}', [App\Http\Controllers\OrderController::class, 'OrderDetails'])->name('order.details');
 Route::post('/order/status', [App\Http\Controllers\OrderController::class, 'UpdateStatus'])->name('order.status');
 Route::get('/order/service/{id}', [App\Http\Controllers\OrderController::class, 'show'])->name('order.show');
 Route::delete('/order/destroy/{id}', [App\Http\Controllers\OrderController::class, 'destroy'])->name('order.destroy');
+
 /** for order */
 Route::get('/schedule', [App\Http\Controllers\ScheduleController::class, 'index'])->name('schedule');
 Route::post('/schedule/store', [App\Http\Controllers\ScheduleController::class, 'store'])->name('schedule.store');
@@ -86,6 +88,14 @@ Route::get('/service/edit/{id}', [App\Http\Controllers\ServiceController::class,
 Route::get('/service/view/{id}', [App\Http\Controllers\ServiceController::class, 'show'])->name('service.show');
 Route::post('/service/update/{id}', [App\Http\Controllers\ServiceController::class, 'update'])->name('service.update');
 Route::delete('/services/destroy/{id}', [App\Http\Controllers\ServiceController::class, 'destroy'])->name('service.destroy');
+
+Route::get('/products', [App\Http\Controllers\ProductController::class, 'index'])->name('products');
+Route::get('/product/create-service', [App\Http\Controllers\ProductController::class, 'create'])->name('products.create');
+Route::post('/product/store', [App\Http\Controllers\ProductController::class, 'store'])->name('products.store');
+Route::get('/product/edit/{id}', [App\Http\Controllers\ProductController::class, 'edit'])->name('product.edit');
+Route::get('/product/view/{id}', [App\Http\Controllers\ProductController::class, 'show'])->name('product.show');
+Route::post('/product/update/{id}', [App\Http\Controllers\ProductController::class, 'update'])->name('product.update');
+Route::delete('/products/destroy/{id}', [App\Http\Controllers\ProductController::class, 'destroy'])->name('product.destroy');
 
 Route::get('/galleries', [App\Http\Controllers\GalleryController::class, 'index'])->name('galleries');
 Route::get('/gallery/create', [App\Http\Controllers\GalleryController::class, 'create'])->name('gallery.create');
@@ -167,6 +177,9 @@ Route::group(['prefix' => 'website-home'], function () {
 
     Route::get('/service-header', [App\Http\Controllers\WebsiteHome\ServiceHeaderController::class, 'index'])->name('website.home.serviceheader');
     Route::post('/service-header/store', [App\Http\Controllers\WebsiteHome\ServiceHeaderController::class, 'store'])->name('website.home.serviceheader.store');
+
+    Route::get('/product-header', [App\Http\Controllers\WebsiteHome\ProductHeaderController::class, 'index'])->name('website.home.productheader');
+    Route::post('/product-header/store', [App\Http\Controllers\WebsiteHome\ProductHeaderController::class, 'store'])->name('website.home.productheader.store');
 
     Route::get('/choose-us', [App\Http\Controllers\WebsiteHome\ChooseUsController::class, 'index'])->name('website.home.chooseus');
     Route::get('/choose-us/create', [App\Http\Controllers\WebsiteHome\ChooseUsController::class, 'create'])->name('website.home.chooseus.create');

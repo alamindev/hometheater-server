@@ -27,10 +27,10 @@ class HomeController extends Controller
     {
         $user_count = User::where('is_admin', 0)->get()->count();
         $order_count = Order::get()->count();
-        $orders = Order::with('user', 'quantity')->orderBy('created_at', 'desc')->take(10)->get();
+        $orders = Order::with('user', 'quantity')->where('type', 0)->orderBy('created_at', 'desc')->take(5)->get();
+        $products = Order::with('user', 'quantity')->where('type', 1)->orderBy('created_at', 'desc')->take(5)->get();
         $pending_order = Order::where('status', 'pending')->orWhere('status', 'approved')->get()->count();
-        $payments = Order::where('status', 'complete')->sum('price');
-
-        return view('pages.index', compact('user_count', 'order_count', 'pending_order', 'orders', 'payments'));
+        $payments = Order::where('status', 'complete')->sum('price'); 
+        return view('pages.index', compact('user_count', 'order_count','products', 'pending_order', 'orders', 'payments'));
     }
 }

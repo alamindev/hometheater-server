@@ -134,6 +134,7 @@ class OrderController extends Controller
                 $d->save();
             }
         }
+        
         if (count($request->images) > 0) {
             $images = collect($request->images);
             foreach ($images as $img) {
@@ -155,6 +156,7 @@ class OrderController extends Controller
                 $img->save();
             }
         }
+
         $user = User::where('id', $request->user_id)->first();
 
 

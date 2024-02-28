@@ -189,7 +189,7 @@ Edit Service
                                 class="form-control">
                                 <option label="default"></option>
                                 @foreach (App\Models\Service::where('id','!=',
-                                $edit->id)->orderBy('created_at','desc')->get() as $service)
+                                $edit->id)->where('type', 0)->orderBy('created_at','desc')->get() as $service)
                                 <option @if(in_array($service->id, $suggestion_id)) selected @endif value="{{
                                     $service->id }}">{{ $service->title }}</option>
                                 @endforeach
