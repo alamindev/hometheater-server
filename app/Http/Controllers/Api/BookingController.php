@@ -24,7 +24,7 @@ class BookingController extends Controller
     public function Bookings($id)
     {
         if ($id) {
-            $bookings = Order::with('quantity')->where('user_id', $id)->latest()->get();
+            $bookings = Order::with('quantity')->where('type', 0)->where('user_id', $id)->latest()->get();
             $bookings = RecentBookingResource::collection($bookings);
             $collection = collect($bookings);
             $total = $collection->count();
@@ -33,6 +33,24 @@ class BookingController extends Controller
             return response()->json([
                 'success' => true,
                 'bookings' => $bookings,
+            ], 200);
+        }
+        return response()->json([
+            'success' => false,
+        ], 200);
+    }
+    public function Products($id)
+    {
+        if ($id) {
+            $products = Order::with('quantity')->where('type', 1)->where('user_id', $id)->latest()->get();
+            $products = RecentBookingResource::collection($products);
+            $collection = collect($products);
+            $total = $collection->count();
+            $pageSize = 10;
+            $products = CollectionHelper::paginate($collection, $total, $pageSize);
+            return response()->json([
+                'success' => true,
+                'products' => $products,
             ], 200);
         }
         return response()->json([
@@ -120,7 +138,7 @@ class BookingController extends Controller
     public function BookingDetails(Request $request, $id)
     {
         if ($request->has('auth_id')) {
-            $order = Order::with('quantity', 'services', 'images', 'questions', 'orderdate')->where('user_id', $request->auth_id)->where('id', $id)->first();
+            $order = Order::with('prices', 'quantity', 'services', 'images', 'questions', 'orderdate')->where('user_id', $request->auth_id)->where('id', $id)->first();
             if ($order) {
                 return response()->json([
                     'success' => true,

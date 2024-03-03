@@ -38,8 +38,11 @@ Route::group(['middleware' => 'jwt.auth'], function () {
     Route::post('/calendar/time',  [App\Http\Controllers\Api\CheckoutController::class, 'CalendarTime']);
     Route::post('/order/store',  [App\Http\Controllers\Api\OrderController::class, 'finishedCheckout']);
 
-    Route::get('/users/dashboard/{id}',  [App\Http\Controllers\Api\DashboardController::class, 'FetchDatas']);
+    Route::get('/users/dashboard/{id}',  [App\Http\Controllers\Api\DashboardController::class, 'FetchDatas']); 
+    Route::get('/users/recent-orders/{id}',  [App\Http\Controllers\Api\DashboardController::class, 'RecentOrders']); 
     Route::get('/bookings/{id}',  [App\Http\Controllers\Api\BookingController::class, 'Bookings']);
+    Route::get('/products/{id}',  [App\Http\Controllers\Api\BookingController::class, 'Products']);
+
     Route::get('/booking/{id}/edit',  [App\Http\Controllers\Api\BookingController::class, 'EditBooking']);
     Route::post('/booking/update',  [App\Http\Controllers\Api\BookingController::class, 'UpdateBooking']);
     Route::get('/booking/{id}/details',  [App\Http\Controllers\Api\BookingController::class, 'BookingDetails']);
@@ -110,6 +113,7 @@ Route::get('livesearch',  [App\Http\Controllers\Api\SearchController::class, 'Li
 Route::get('blog/search',  [App\Http\Controllers\Api\SearchController::class, 'blogSearch']);
 Route::get('service/search',  [App\Http\Controllers\Api\SearchController::class, 'serviceSearch']);
 Route::post('cart/suggest',  [App\Http\Controllers\Api\CartController::class, 'index']);
+Route::get('cart/taxes',  [App\Http\Controllers\Api\CartController::class, 'Taxes']);
 Route::get('/cart/booking/{id}',  [App\Http\Controllers\Api\CartController::class, 'getService']);
 
 Route::post('anything',  function () {

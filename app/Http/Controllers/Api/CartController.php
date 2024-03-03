@@ -8,6 +8,7 @@ use App\Models\Service;
 use App\Http\Resources\ServiceResource;
 use App\Http\Resources\SingleServiceResource;
 use App\Models\Review;
+use App\Models\Setting;
 
 class CartController extends Controller
 {
@@ -38,6 +39,16 @@ class CartController extends Controller
             return response()->json([
                 'success' => true,
                 'suggests' => ServiceResource::collection($suggests)
+            ], 200);
+        }
+    }
+     public function Taxes(Request $request)
+    {
+        $setting = Setting::first();
+        if (!empty($setting)) {
+            return response()->json([
+                'success' => true,
+                'taxes' => $setting->taxes
             ], 200);
         }
     }

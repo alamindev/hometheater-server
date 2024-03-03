@@ -41,9 +41,9 @@ class ProductController extends Controller
      * fetch servies detials by id
      */
     public function ProductDetails($slug)
-    {
-
+    { 
       $product =  Service::with('serviceImage', 'reviews')->where('type', 1)->where('slug', $slug)->first();
+     
         if (!empty($product)) {
            $product_ids = Service::with('serviceImage')->where('type', 1)->where('id', '!=', $product->id)->where('category_id', $product->category_id)->pluck('id');
                 if($product->suggestion){

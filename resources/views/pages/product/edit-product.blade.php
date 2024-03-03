@@ -39,33 +39,16 @@ Edit Product
                             @endif
                         </div>
                         <div class="form-group">
-                            <label for="service_type" class="form-control-label">Service Type <span
+                            <label for="service_type" class="form-control-label">SKU <span
                                     class="text-danger">*</span></label>
                             <input type="text" required id="service_type" name="service_type"
                                 value="{{ $edit->service_type }}" class="form-control" placeholder="Example:- TV1001">
                             @if($errors->has('service_type'))
                             <div class="text-danger">{{ $errors->first('service_type') }}</div>
                             @endif
-                        </div>
+                        </div> 
                         <div class="form-group">
-                            <label for="duration" class=" form-control-label">Duration <span
-                                    class="text-danger">*</span></label>
-                            <select name="duration" id="duration" required class="form-control">
-                                <option value="1" @if($edit->duration === 1) selected @endif>1 Hour</option>
-                                <option value="2" @if($edit->duration === 2) selected @endif>2 Hours</option>
-                                <option value="3" @if($edit->duration === 3) selected @endif>3 Hours</option>
-                                <option value="4" @if($edit->duration === 4) selected @endif>4 Hours</option>
-                                <option value="5" @if($edit->duration === 5) selected @endif>5 Hours</option>
-                                <option value="6" @if($edit->duration === 6) selected @endif>6 Hours</option>
-                                <option value="7" @if($edit->duration === 7) selected @endif>7 Hours</option>
-                                <option value="8" @if($edit->duration === 8) selected @endif>8 Hours - 1 day </option>
-                            </select>
-                            @if($errors->has('duration'))
-                            <div class="text-danger">{{ $errors->first('duration') }}</div>
-                            @endif
-                        </div>
-                        <div class="form-group">
-                            <label for="basic_price" class="form-control-label">Basic price <span
+                            <label for="basic_price" class="form-control-label">Regular price <span
                                     class="text-danger">*</span></label>
                             <input type="number" required id="basic_price" name="basic_price"
                                 value="{{ $edit->basic_price }}" class="form-control">
@@ -74,13 +57,15 @@ Edit Product
                             @endif
                         </div>
 
-                        {{-- <div class="form-group" >
-                            <label for="icon" class="form-control-label">Service Icon Type</label>
-                            <select required name="type" id="type" class="form-control">
-                                <option value="0" @if($edit->type===0) selected @endif>Icon</option>
-                                <option value="1" @if($edit->type===1) selected @endif>Svg</option>
-                            </select>
-                        </div>--}}
+                        <div class="form-group">
+                            <label for="discount_price" class="form-control-label">Price Discount   <span
+                                    class="text-danger">(optional)</span></label>
+                            <input type="number"  maxlength="2" minlength="1" min="1" max="99" placeholder="10%"  id="discount_price" name="discount_price"
+                            value="{{ $edit->discount_price }}" class="form-control">
+                            @if($errors->has('discount_price'))
+                            <div class="text-danger">{{ $errors->first('discount_price') }}</div>
+                            @endif
+                        </div>
                        <div class="form-group" id="fonticon">
                             <label for="icon" class="form-control-label">  Icon <span class="text-danger">(fontawesome icon class
                                     name)</span></label>
@@ -169,31 +154,53 @@ Edit Product
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="seo_details" class="form-control-label">Seo Description </label>
-                            <textarea name="seo_details" cols="5" rows="5" id="seo_details"
-                                class="form-control"> {{ !empty($edit) ? $edit->seo_details : '' }}								</textarea>
+                        <div class="form-group pb-3">
+                            <div class="d-flex justify-content-between pb-2">
+                                <label for="image" class=" form-control-label">Colors<span
+                                        class="text-danger">(optional)</span></label>
+                                <button type="button" class="btn btn-sm btn-info add-new-color"><i
+                                        class="fa fa-plus"></i></button>
+                            </div>
+                            <div class="color">
+                                @php
+                                $colors = explode('||#||', $edit->color);
+                                array_pop($colors); 
+                                @endphp
+                                <div class="list-group">
+                                    @foreach($colors as $data)
+                                    <div class="list-group-item d-flex align-items-center">
+                                        @php
+                                        $color = explode('||*||', $data);  
+                                        @endphp
+                                        <div class="d-flex w-100">
+                                            <div class="px-1 w-50">
+                                                <input type="text" name="color_name[]" value="{{ array_key_exists(0, $color) ? $color[0] : '' }}" placeholder="Color Name" class="form-control">
+                                            </div>
+                                            <div class="px-1 w-50">
+                                                <input type="text" name="color_code[]" value="{{  array_key_exists(1, $color) ? $color[1] : ''}}" placeholder="Color Code" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="color__trash bg-danger text-white p-2 flex-shrink-0">
+                                            <i class="fa fa-trash"></i>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="keyword" class=" form-control-label">Keyword <span class="text-danger">(keyword
-                                    by comma)</span></label>
-                            <textarea name="keyword" cols="5" rows="5" id="keyword" class="form-control"
-                                placeholder="Enter keyword by comma"> {{ !empty($edit) ? $edit->keyword : '' }}</textarea>
-                        </div>
-                        <div class="form-group">
-                            @php
-                            $suggestion_id = explode(',', $edit->suggestion);
-                            @endphp
-                            <label for="keyword" class=" form-control-label">Suggestion</label>
-                            <select data-placeholder="Suggestion" multiple name="suggestion[]" id="suggestion"
-                                class="form-control">
-                                <option label="default"></option>
-                                @foreach (App\Models\Service::where('id','!=',
-                                $edit->id)->where('type', 1)->orderBy('created_at','desc')->get() as $service)
-                                <option @if(in_array($service->id, $suggestion_id)) selected @endif value="{{
-                                    $service->id }}">{{ $service->title }}</option>
-                                @endforeach
-                            </select>
+                            <label for="conditions" class="form-control-label">Condition<span
+                                    class="text-danger">*</span></label>
+                           <select name="conditions" id="conditions" required class="form-control">
+                            <option value="new" @if($edit->conditions === 'new') selected
+                                @endif>New</option>
+                            <option value="used" @if($edit->conditions === 'used') selected
+                                @endif>Used</option>
+                            <option value="out of box" @if($edit->conditions === 'out of box') selected
+                                @endif>Out of Box</option>
+                            <option value="refurbished" @if($edit->conditions === 'refurbished') selected
+                                @endif>Refurbished</option> 
+                           </select>
                         </div>
                     </div>
                 </div>
@@ -235,6 +242,32 @@ Edit Product
                             <option value="10"@if($edit->delivery_time === 10) selected
                                 @endif>10 Days</option>
                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="seo_details" class="form-control-label">Seo Description </label>
+                            <textarea name="seo_details" cols="5" rows="5" id="seo_details"
+                                class="form-control"> {{ !empty($edit) ? $edit->seo_details : '' }}								</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="keyword" class=" form-control-label">Keyword <span class="text-danger">(keyword
+                                    by comma)</span></label>
+                            <textarea name="keyword" cols="5" rows="5" id="keyword" class="form-control"
+                                placeholder="Enter keyword by comma"> {{ !empty($edit) ? $edit->keyword : '' }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            @php
+                            $suggestion_id = explode(',', $edit->suggestion);
+                            @endphp
+                            <label for="keyword" class=" form-control-label">Suggestion</label>
+                            <select data-placeholder="Suggestion" multiple name="suggestion[]" id="suggestion"
+                                class="form-control">
+                                <option label="default"></option>
+                                @foreach (App\Models\Service::where('id','!=',
+                                $edit->id)->where('type', 1)->orderBy('created_at','desc')->get() as $service)
+                                <option @if(in_array($service->id, $suggestion_id)) selected @endif value="{{
+                                    $service->id }}">{{ $service->title }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </div> 

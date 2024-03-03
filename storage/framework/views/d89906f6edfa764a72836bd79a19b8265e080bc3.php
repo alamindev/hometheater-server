@@ -25,6 +25,11 @@ Product view
                                 <td>$<?php echo e($view->basic_price); ?></td>
                             </tr> 
                             <tr>
+                                <td>Discount Price</td>
+                                <td>:</td>
+                                <td>$<?php echo e($view->discount_price); ?></td>
+                            </tr> 
+                            <tr>
                                 <td>Product Category</td>
                                 <td>:</td>
                                 <td><?php echo e($view->category->cate_name); ?></td>
@@ -75,7 +80,7 @@ Product view
             </div>
             <div class="card">
                 <div class="card-header">
-                    <h4>Service Images</h4>
+                    <h4>Product Images</h4>
                 </div>
                 <div class="card-body card-block">
                     <div class="row">
@@ -89,7 +94,7 @@ Product view
             </div>
             <div class="card">
                 <div class="card-header">
-                    <h4>Service Feature</h4>
+                    <h4>Product Feature</h4>
                 </div>
                 <div class="card-body card-block">
                     <table class="table table-bordered">

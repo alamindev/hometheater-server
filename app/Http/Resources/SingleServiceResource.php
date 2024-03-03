@@ -13,13 +13,31 @@ class SingleServiceResource extends JsonResource
      * @return array
      */
     public function toArray($request)
-    {
+    { 
+        $colors = explode('||#||', $this->color);
+        array_pop($colors);
+        $newColor = [];
+        foreach($colors as $color){
+            $c = explode('||*||', $color);  
+            array_push($newColor, $c);
+        } 
+        $discount = 0;
+        if($this->discount_price){
+            $discount =   round($this->basic_price - $this->basic_price * ($this->discount_price / 100), 2);
+        }
         return [
             "id" => $this->id,
             "title" => $this->title,
             "icon" => $this->icon,
             "slug" => $this->slug,
+            "type" => $this->type,
+            "code" => $this->service_type,
             "price" => $this->basic_price,
+            "discount" => $this->discount_price,
+            "discount_price" => $discount,
+            "conditions" => $this->conditions,
+            "delivery_time" => $this->delivery_time,
+            "colors" =>  $newColor,
             "duration" => $this->duration,
             "details" => $this->details,
             "seo_details" => $this->seo_details,

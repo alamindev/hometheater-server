@@ -5,6 +5,9 @@ namespace App\Http\Resources;
 use App\Models\OrderQuantity;
 use App\Models\QuestionOption;
 use App\Models\Service;
+use App\Models\OrderPrice;
+use App\Models\OrderVarient;
+use Carbon\Carbon;
 use App\Models\ServiceQuestion;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,18 +21,22 @@ class BookingDetailsResource extends JsonResource
      */
     public function toArray($request)
     {
+                      
         return [
             'id' => $this->id,
             'order_id' => $this->order_id,
-            'price' => $this->price,
-            'sub_total' => $this->sub_total,
+            'price' => (float)$this->price,
+            'sub_total' => (float)$this->sub_total,
             'payment' => $this->payment,
-            'discount' => $this->discount,
-            'discount_price' => $this->discount_price,
-            'addon_price' => $this->addon_price,
+            'discount' => (float)$this->discount,
+            'discount_price' => (float)$this->discount_price,
+            'addon_price' => (float)$this->addon_price,
+            'taxes' => (float)$this->taxes,
+            'quantity' => collect($this->quantity)->pluck('quantity')->sum(),
             'status' => $this->status,
             'created_at' => $this->created_at,
             'datetime' => $this->orderdate,
+            'delivery_time' => $this->delivery_time,
             'address' => $this->getAddress($this->user),
             'images' => ImageResource::collection($this->whenLoaded('images')),
             'services' => $this->MainServices($this->whenLoaded('services')->pluck('service_id'), $this->id),
@@ -39,20 +46,23 @@ class BookingDetailsResource extends JsonResource
     }
     public function MainServices($service_ids, $order_id)
     {
-        $services =   Service::with('serviceImage')->whereIn('id', $service_ids)->select('id', 'title', 'basic_price', 'slug', 'duration')->get();
+        $services =   Service::with('serviceImage')->whereIn('id', $service_ids)->select('id', 'service_type', 'title', 'basic_price', 'slug', 'duration')->get();
 
         $newservices = [];
 
         foreach ($services as $key => $service) {
             $quantity = OrderQuantity::where('order_id', $order_id)->where('service_id', $service->id)->first();
+            $price = OrderPrice::where('order_id', $order_id)->where('service_id', $service->id)->first();
+            $varient = OrderVarient::where('order_id', $order_id)->where('service_id', $service->id)->first();
             $newservices[$key]['id'] = $service->id;
             $newservices[$key]['title'] = $service->title;
             $newservices[$key]['image'] = count($service->serviceImage) > 0 ? $service->serviceImage[0]->image : null;
             $newservices[$key]['duration'] = $service->duration;
             $newservices[$key]['slug'] = $service->slug;
+            $newservices[$key]['code'] = $service->service_type;
             $newservices[$key]['quantity'] = $quantity ? $quantity->quantity : '';
-            $newservices[$key]['sub_total'] = $service->basic_price;
-            $newservices[$key]['total'] = $quantity ? $quantity->quantity * $service->basic_price : '';
+            $newservices[$key]['total'] = $price ? $price->item_price : ''; 
+            $newservices[$key]['varient'] = $varient ? ['name'=> $varient->name, 'value'=> $varient->value] : ''; 
         }
         return  $newservices;
     }

@@ -38,6 +38,7 @@ class SettingController extends Controller
         if ($id != null) {
             $setting  = Setting::first();
             $setting->copyright = $request->copyright;
+            $setting->taxes = $request->taxes;
             $setting->site_title = $request->site_title;
             $setting->analytics_id = $request->analytics_id;
             $setting->site_logo = $site_logo !== null ? $site_logo : $setting->site_logo;
@@ -52,11 +53,12 @@ class SettingController extends Controller
             $setting->save();
         } else {
             $setting  = new Setting;
-            $setting->site_logo = $site_logo;
+            $setting->site_logo = $site_logo; 
             $setting->site_title = $request->site_title;
             $setting->analytics_id = $request->analytics_id;
             $setting->favicon = $fav_icon;
             $setting->copyright = $request->copyright;
+            $setting->taxes = $request->taxes;
             $setting->footer_logo = $footer_logo;
             $setting->footer_details = $request->footer_details;
             $setting->facebook = $request->facebook;

@@ -58,6 +58,14 @@ Setting
                         <input type="text" id="copyright" value="{{ $setting ? $setting->copyright : old('copyright') }}"  name="copyright" class="form-control">
                     </div>
                 </div>
+                <div class="row form-group">
+                    <div class="col col-md-3">
+                        <label for="Taxes" class="form-control-label">Taxes</label>
+                    </div>
+                    <div class="col-12 col-md-9">
+                        <input type="text" id="Taxes" value="{{ $setting ? $setting->taxes : old('taxes') }}"  name="taxes" class="form-control">
+                    </div>
+                </div>
             </div>
         </div>
         <div class="card">

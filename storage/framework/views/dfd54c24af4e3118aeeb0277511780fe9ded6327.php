@@ -89,6 +89,7 @@ Dashboard
                             <h4 class="box-title">Recent Service Booking</h4>
                         </div>
                         <div class="card-body--">
+                            <?php if(count($orders) > 0): ?>
                             <div class="table-stats order-table ov-h">
                                 <table class="table ">
                                     <thead>
@@ -140,17 +141,29 @@ Dashboard
                                                <a href="<?php echo e(route('order.details', $order->order_id)); ?>" class="btn btn-info btn-blue">Order Details</a>
                                             </td>
                                         </tr>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        
                                     </tbody>
                                 </table>
                             </div> <!-- /.table-stats -->
+                            <?php else: ?> 
+                               <h4 class="text-center p-3">No Data availble</h4>
+                            <?php endif; ?>
                         </div>
                     </div> <!-- /.card --> 
+                    <?php if(count($orders) > 0): ?>
+                    <div class="card">
+                        <div class="card-body d-flex justify-content-center">
+                            <a href="<?php echo e(route('order')); ?>" class="btn btn-success">Show all</a>
+                        </div>
+                    </div> 
+                    <?php endif; ?>
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="box-title">Recent Product Order</h4>
                             </div>
                             <div class="card-body--">
+                                <?php if(count($products) > 0): ?>
                                 <div class="table-stats order-table ov-h">
                                     <table class="table ">
                                         <thead>
@@ -206,19 +219,19 @@ Dashboard
                                         </tbody>
                                     </table>
                                 </div> <!-- /.table-stats -->
+                                <?php else: ?> 
+                               <h4 class="text-center p-3">No Data availble</h4>
+                            <?php endif; ?>
                             </div>
                         </div> <!-- /.card -->
-                        <div class="card">
-                            <div class="card-body d-flex justify-content-center">
-                                <a href="<?php echo e(route('order')); ?>" class="btn btn-success">Show all</a>
-                            </div>
-                        </div> 
-    
+                        
+                        <?php if(count($products) > 0): ?>
                     <div class="card">
                         <div class="card-body d-flex justify-content-center">
                             <a href="<?php echo e(route('order')); ?>" class="btn btn-success">Show all</a>
                         </div>
                     </div>
+                    <?php endif; ?>
                 </div>  <!-- /.col-lg-8 -->
 
             </div>

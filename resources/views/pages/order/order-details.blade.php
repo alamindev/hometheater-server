@@ -16,8 +16,12 @@ Order details
                     <h4>Booking Details</h4>
                     @else 
                     <h4>Order Details</h4>
-                    @endif
-                    <a href="{{ url()->previous() }}" class="btn btn-success"> <i class="fa  fa-arrow-left "></i> Back</a>
+                    @endif 
+                    @if($order->type === 0)
+                    <a href="{{ route('order') }}" class="btn btn-success"> <i class="fa  fa-arrow-left "></i> Back</a>
+                    @else
+                    <a href="{{ route('productorder') }}" class="btn btn-success"> <i class="fa  fa-arrow-left "></i> Back</a>
+                    @endif 
                 </div>
                 <div class="card-body card-block">
                         <div class="row">
@@ -49,9 +53,8 @@ Order details
                                 @else 
                                 <h4 class="pb-3">Ordered At: <strong>{{\Carbon\Carbon::parse($order->created_at)->format('d M Y')}} {{ \Carbon\Carbon::parse($order->created_at)->format('g:i A') }}</strong></h4>
                                 @endif
-                                <div class="d-flex">
-                                    <h4 class="pb-3 pr-5">Price: <strong>${{ $order->price}}</strong></h4>
-                                    <h4>Payment: <strong>{{ $order->payment}} Payment</strong></h4>
+                                <div class="d-flex"> 
+                                    <h4>Payment Methods: <strong class="text-danger">{{ $order->payment}} Payment</strong></h4>
                                 </div>
                             </div>
                         </div>
@@ -60,17 +63,60 @@ Order details
                             <td>Order ID</td>
                             <td>:</td>
                             <td><strong>#{{$order->order_id}}</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Discount</td>
-                            <td>:</td>
-                            <td><strong>@if($order->discount){{$order->discount}}% @endif</strong></td>
-                        </tr>
+                        </tr> 
                         <tr>
                             <td>Order Quantity</td>
                             <td>:</td>
                             <td><strong>{{ collect($order->quantity)->pluck('quantity')->sum()}}</strong></td>
                         </tr>
+                        @if($order->discount)
+                            <tr>
+                                <td>Discount</td>
+                                <td>:</td>
+                                <td><strong>{{$order->discount}}%</strong></td>
+                            </tr>
+                        @endif
+                        @if($order->addon_price)
+                            <tr>
+                                <td>Addons</td>
+                                <td>:</td>
+                                <td><strong>${{$order->addon_price}}</strong></td>
+                            </tr>
+                        @endif
+                        
+                        <tr>
+                            <td>Total  </td>
+                            <td>:</td>
+                            @if($order->discount)
+                            <td><strong>${{ ($order->price + $order->addon_price) - $order->discount_price}}</strong>  <sub>(Discount Includes) </sub></td>
+                            @else 
+                            <td><strong>${{ $order->price}}</strong></td>
+                            @endif
+                            
+                        </tr>
+                    @if($order->payment === 'online')
+                        <tr>
+                            <td>Taxes</td>
+                            <td>:</td>
+                            <td><strong>{{$order->taxes}}%</strong></td>
+                        </tr>
+                        
+                        <tr>
+                            <td>Total Price</td>
+                            <td>:</td>
+                            @if($order->discount) 
+                            @php 
+                                $total =  ($order->price + $order->addon_price) - $order->discount_price;
+                            @endphp
+                            @else 
+                            @php 
+                                $total =  ($order->price + $order->addon_price);
+                            @endphp
+                            @endif
+                            <td><strong>${{ round($total +  $total * ($order->taxes / 100), 2)  }}</strong> @if($order->payment === 'online') <b class="text-primary">(Paid)</b> @else <b class="text-danger">(Not Paid)</b> @endif <sub>(Texes Includes) </sub></td>
+                            
+                        </tr>
+                        @endif
                     </table>
                 </div>
             </div>
@@ -115,7 +161,51 @@ Order details
                         </div>
                     </div>
                     @endif
-        
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4>Service Details</h4>
+                        </div>
+                        <div class="card-body card-block">
+                            <div class="row">
+                                @foreach($order->services as $ser)
+                                    @php
+                                          $service = \App\Models\Service::where('id', $ser->service_id)->first();
+                                    @endphp
+                                    @if($service)
+                                    <div class="col-lg-6">
+                                        <a href="{{route('order.show', $service->id)}}">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4 class="pb-3"><strong>{{ $service->title }}</strong></h4>
+                                                    @if($service->type === 0)
+                                                    <h4 class="pb-3">Price: <strong>${{ $service->basic_price}}</strong></h4>
+                                                    @endif
+                                                    @php
+                                                        $quantity = \App\Models\OrderQuantity::where('order_id', $order->id)->where('service_id', $service->id)->first();
+                                                        $price = \App\Models\OrderPrice::where('order_id', $order->id)->where('service_id', $service->id)->first();
+                                                        $varient = \App\Models\OrderVarient::where('order_id', $order->id)->where('service_id', $service->id)->first();
+                                                    @endphp
+                                                    <h4 class="pb-3">Qualtity: <strong>{{ $quantity ? $quantity->quantity : '' }}</strong></h4>
+                                                    @if($price)
+                                                    <h4 class="pb-3">Total Price: <strong>${{ $price ? $price->item_price   : '' }}</strong></h4>
+                                                    @endif
+                                                    @if($varient)
+                                                        <h4 class="font-weight-bold">User Selected Varient</h4>
+                                                        <p>Name: {{ $varient->name }}</p>
+                                                        <p style="background-color: {{ $varient->value}}; width: 40px; height: 40px" ></p>
+                                                    @endif
+                                                   @if($service->type === 0)
+                                                   <h4 class="pb-3">Duration: <strong>{{ $service->duration == 1 ? $service->duration. ' hour' : $service->duration .' hours' }}</strong></h4>
+                                                   @endif
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>User Details</h4>
@@ -162,38 +252,7 @@ Order details
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>Service Details</h4>
-                </div>
-                <div class="card-body card-block">
-                    <div class="row">
-                        @foreach($order->services as $ser)
-                            @php
-                                  $service = \App\Models\Service::where('id', $ser->service_id)->first();
-                            @endphp
-                            @if($service)
-                            <div class="col-lg-6">
-                                <a href="{{route('order.show', $service->id)}}">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h4 class="pb-3"><strong>{{ $service->title }}</strong></h4>
-                                            <h4 class="pb-3">Price: <strong>${{ $service->basic_price}}</strong></h4>
-                                            @php
-                                                $quantity = \App\Models\OrderQuantity::where('order_id', $order->id)->where('service_id', $service->id)->first();
-                                            @endphp
-                                            <h4 class="pb-3">Qualtity: <strong>{{ $quantity ? $quantity->quantity : '' }}</strong></h4>
-                                            <h4 class="pb-3">Total Price: <strong>${{ $quantity ? $quantity->quantity * $service->basic_price : '' }}</strong></h4>
-                                            <h4 class="pb-3">Duration: <strong>{{ $service->duration == 1 ? $service->duration. ' hour' : $service->duration .' hours' }}</strong></h4>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            @endif
-                        @endforeach
-                    </div>
-                </div>
-            </div>
+            
             @if($order->type === 0)  
             
             <div class="card">

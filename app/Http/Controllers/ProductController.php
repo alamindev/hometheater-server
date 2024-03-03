@@ -81,15 +81,20 @@ class ProductController extends Controller
             'basic_price' => 'required', 
             'category_id' => 'required',
             'delivery_time' => 'required',
-            'service_type' => 'required|min:6|max:7',
+            'service_type' => 'required',
             'image' => 'required',
             'thumbnail' => 'required',
+            'conditions' => 'required',
         ]);
+ 
+
         $product  = new Service;
         $product->title = $request->title;
         $product->slug = Slug::createSlug($request->slug);
         $product->service_type = $request->service_type;
         $product->basic_price = $request->basic_price;
+        $product->discount_price = $request->discount_price;
+        $product->conditions = $request->conditions;
         $product->type = 1;
         $product->icon = $request->icon; 
         $product->delivery_time = $request->delivery_time; 
@@ -101,6 +106,13 @@ class ProductController extends Controller
 			 $product->suggestion = implode(',', $request->suggestion);
 		}
 
+        if ($request->color_name != null && count($request->color_name) > 0 && $request->color_code != null && count($request->color_code) > 0) {
+            $color = '';
+            for ($i = 0; $i < count($request->color_name); $i++) {
+                $color .= $request->color_name[$i] . "||*||". $request->color_code[$i] . "||#||";
+            }
+            $product->color = $color;
+        }
 
         if ($request->feature != null && count($request->feature) > 0) {
             $feature = '';
@@ -110,6 +122,8 @@ class ProductController extends Controller
             }
             $product->datas = $feature;
         }
+
+
           $product->thumbnail =  $this->upload_thumbnail($request);
 
         $product->save();
@@ -190,19 +204,22 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
+  
         $request->validate([
-            'title' => 'required',
-            'duration' => 'required',
+            'title' => 'required', 
             'basic_price' => 'required',
             'delivery_time' => 'required',
             'category_id' => 'required',
-            'service_type' => 'required|min:6|max:7',
+            'service_type' => 'required',
+            'conditions' => 'required',
         ]);
 
         $product  =   Service::find($id);
         $product->title = $request->title;
         $product->service_type = $request->service_type;
         $product->basic_price = $request->basic_price;
+        $product->discount_price = $request->discount_price;
+        $product->conditions = $request->conditions;
         $product->slug =   Slug::createSlug($request->slug);
         $product->icon = $request->icon;
         $product->type = 1;
@@ -217,6 +234,15 @@ class ProductController extends Controller
              $product->suggestion = '';
         }
 
+
+        if ($request->color_name != null && count($request->color_name) > 0 && $request->color_code != null && count($request->color_code) > 0) {
+            $color = '';
+            for ($i = 0; $i < count($request->color_name); $i++) {
+                $color .= $request->color_name[$i] . "||*||". $request->color_code[$i] . "||#||";
+            }
+            $product->color = $color; 
+        }
+
         if ($request->feature != null && count($request->feature) > 0) {
             $feature = '';
             for ($i = 0; $i < count($request->feature); $i++) {
@@ -224,6 +250,7 @@ class ProductController extends Controller
             }
             $product->datas = $feature;
         }
+        
 
         $product->thumbnail = $this->update_thumbnail($request, $product);
         $product->save();

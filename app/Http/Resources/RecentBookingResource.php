@@ -19,9 +19,10 @@ class RecentBookingResource extends JsonResource
         return [
             'id' => $this->id,
             'order_id' => $this->order_id,
-            'datetime' => count($this->orderdate) > 0 ? \Carbon\Carbon::parse($this->orderdate[0]['date'])->format('m/d/Y') : '',
+            'datetime' => \Carbon\Carbon::parse($this->created_at)->format('m/d/Y'),
             'status' => $this->status,
             'total' => $this->price,
+            'type' => $this->type,
             'service_type' => Service::whereIn('id', $this->services->pluck('service_id'))->pluck('service_type'),
         ];
     }

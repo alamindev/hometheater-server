@@ -21,6 +21,14 @@ class Order extends Model
     {
         return $this->hasMany(OrderQuantity::class);
     }
+    public function varients()
+    {
+        return $this->hasMany(OrderVarient::class);
+    }
+    public function prices()
+    {
+        return $this->hasMany(OrderPrice::class);
+    }
     public function services()
     {
         return $this->hasMany(OrderService::class);

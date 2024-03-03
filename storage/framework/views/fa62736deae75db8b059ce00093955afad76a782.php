@@ -15,8 +15,12 @@ Order details
                     <h4>Booking Details</h4>
                     <?php else: ?> 
                     <h4>Order Details</h4>
-                    <?php endif; ?>
-                    <a href="<?php echo e(url()->previous()); ?>" class="btn btn-success"> <i class="fa  fa-arrow-left "></i> Back</a>
+                    <?php endif; ?> 
+                    <?php if($order->type === 0): ?>
+                    <a href="<?php echo e(route('order')); ?>" class="btn btn-success"> <i class="fa  fa-arrow-left "></i> Back</a>
+                    <?php else: ?>
+                    <a href="<?php echo e(route('productorder')); ?>" class="btn btn-success"> <i class="fa  fa-arrow-left "></i> Back</a>
+                    <?php endif; ?> 
                 </div>
                 <div class="card-body card-block">
                         <div class="row">
@@ -48,9 +52,8 @@ Order details
                                 <?php else: ?> 
                                 <h4 class="pb-3">Ordered At: <strong><?php echo e(\Carbon\Carbon::parse($order->created_at)->format('d M Y')); ?> <?php echo e(\Carbon\Carbon::parse($order->created_at)->format('g:i A')); ?></strong></h4>
                                 <?php endif; ?>
-                                <div class="d-flex">
-                                    <h4 class="pb-3 pr-5">Price: <strong>$<?php echo e($order->price); ?></strong></h4>
-                                    <h4>Payment: <strong><?php echo e($order->payment); ?> Payment</strong></h4>
+                                <div class="d-flex"> 
+                                    <h4>Payment Methods: <strong class="text-danger"><?php echo e($order->payment); ?> Payment</strong></h4>
                                 </div>
                             </div>
                         </div>
@@ -59,17 +62,60 @@ Order details
                             <td>Order ID</td>
                             <td>:</td>
                             <td><strong>#<?php echo e($order->order_id); ?></strong></td>
-                        </tr>
-                        <tr>
-                            <td>Discount</td>
-                            <td>:</td>
-                            <td><strong><?php if($order->discount): ?><?php echo e($order->discount); ?>% <?php endif; ?></strong></td>
-                        </tr>
+                        </tr> 
                         <tr>
                             <td>Order Quantity</td>
                             <td>:</td>
                             <td><strong><?php echo e(collect($order->quantity)->pluck('quantity')->sum()); ?></strong></td>
                         </tr>
+                        <?php if($order->discount): ?>
+                            <tr>
+                                <td>Discount</td>
+                                <td>:</td>
+                                <td><strong><?php echo e($order->discount); ?>%</strong></td>
+                            </tr>
+                        <?php endif; ?>
+                        <?php if($order->addon_price): ?>
+                            <tr>
+                                <td>Addons</td>
+                                <td>:</td>
+                                <td><strong>$<?php echo e($order->addon_price); ?></strong></td>
+                            </tr>
+                        <?php endif; ?>
+                        
+                        <tr>
+                            <td>Total  </td>
+                            <td>:</td>
+                            <?php if($order->discount): ?>
+                            <td><strong>$<?php echo e(($order->price + $order->addon_price) - $order->discount_price); ?></strong>  <sub>(Discount Includes) </sub></td>
+                            <?php else: ?> 
+                            <td><strong>$<?php echo e($order->price); ?></strong></td>
+                            <?php endif; ?>
+                            
+                        </tr>
+                    <?php if($order->payment === 'online'): ?>
+                        <tr>
+                            <td>Taxes</td>
+                            <td>:</td>
+                            <td><strong><?php echo e($order->taxes); ?>%</strong></td>
+                        </tr>
+                        
+                        <tr>
+                            <td>Total Price</td>
+                            <td>:</td>
+                            <?php if($order->discount): ?> 
+                            <?php 
+                                $total =  ($order->price + $order->addon_price) - $order->discount_price;
+                            ?>
+                            <?php else: ?> 
+                            <?php 
+                                $total =  ($order->price + $order->addon_price);
+                            ?>
+                            <?php endif; ?>
+                            <td><strong>$<?php echo e(round($total +  $total * ($order->taxes / 100), 2)); ?></strong> <?php if($order->payment === 'online'): ?> <b class="text-primary">(Paid)</b> <?php else: ?> <b class="text-danger">(Not Paid)</b> <?php endif; ?> <sub>(Texes Includes) </sub></td>
+                            
+                        </tr>
+                        <?php endif; ?>
                     </table>
                 </div>
             </div>
@@ -115,7 +161,51 @@ Order details
                         </div>
                     </div>
                     <?php endif; ?>
-        
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4>Service Details</h4>
+                        </div>
+                        <div class="card-body card-block">
+                            <div class="row">
+                                <?php $__currentLoopData = $order->services; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ser): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php
+                                          $service = \App\Models\Service::where('id', $ser->service_id)->first();
+                                    ?>
+                                    <?php if($service): ?>
+                                    <div class="col-lg-6">
+                                        <a href="<?php echo e(route('order.show', $service->id)); ?>">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h4 class="pb-3"><strong><?php echo e($service->title); ?></strong></h4>
+                                                    <?php if($service->type === 0): ?>
+                                                    <h4 class="pb-3">Price: <strong>$<?php echo e($service->basic_price); ?></strong></h4>
+                                                    <?php endif; ?>
+                                                    <?php
+                                                        $quantity = \App\Models\OrderQuantity::where('order_id', $order->id)->where('service_id', $service->id)->first();
+                                                        $price = \App\Models\OrderPrice::where('order_id', $order->id)->where('service_id', $service->id)->first();
+                                                        $varient = \App\Models\OrderVarient::where('order_id', $order->id)->where('service_id', $service->id)->first();
+                                                    ?>
+                                                    <h4 class="pb-3">Qualtity: <strong><?php echo e($quantity ? $quantity->quantity : ''); ?></strong></h4>
+                                                    <?php if($price): ?>
+                                                    <h4 class="pb-3">Total Price: <strong>$<?php echo e($price ? $price->item_price   : ''); ?></strong></h4>
+                                                    <?php endif; ?>
+                                                    <?php if($varient): ?>
+                                                        <h4 class="font-weight-bold">User Selected Varient</h4>
+                                                        <p>Name: <?php echo e($varient->name); ?></p>
+                                                        <p style="background-color: <?php echo e($varient->value); ?>; width: 40px; height: 40px" ></p>
+                                                    <?php endif; ?>
+                                                   <?php if($service->type === 0): ?>
+                                                   <h4 class="pb-3">Duration: <strong><?php echo e($service->duration == 1 ? $service->duration. ' hour' : $service->duration .' hours'); ?></strong></h4>
+                                                   <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <?php endif; ?>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+                        </div>
+                    </div>
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>User Details</h4>
@@ -166,38 +256,7 @@ Order details
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>Service Details</h4>
-                </div>
-                <div class="card-body card-block">
-                    <div class="row">
-                        <?php $__currentLoopData = $order->services; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ser): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <?php
-                                  $service = \App\Models\Service::where('id', $ser->service_id)->first();
-                            ?>
-                            <?php if($service): ?>
-                            <div class="col-lg-6">
-                                <a href="<?php echo e(route('order.show', $service->id)); ?>">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h4 class="pb-3"><strong><?php echo e($service->title); ?></strong></h4>
-                                            <h4 class="pb-3">Price: <strong>$<?php echo e($service->basic_price); ?></strong></h4>
-                                            <?php
-                                                $quantity = \App\Models\OrderQuantity::where('order_id', $order->id)->where('service_id', $service->id)->first();
-                                            ?>
-                                            <h4 class="pb-3">Qualtity: <strong><?php echo e($quantity ? $quantity->quantity : ''); ?></strong></h4>
-                                            <h4 class="pb-3">Total Price: <strong>$<?php echo e($quantity ? $quantity->quantity * $service->basic_price : ''); ?></strong></h4>
-                                            <h4 class="pb-3">Duration: <strong><?php echo e($service->duration == 1 ? $service->duration. ' hour' : $service->duration .' hours'); ?></strong></h4>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <?php endif; ?>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    </div>
-                </div>
-            </div>
+            
             <?php if($order->type === 0): ?>  
             
             <div class="card">

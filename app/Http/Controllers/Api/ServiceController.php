@@ -77,8 +77,9 @@ class ServiceController extends Controller
      */
     public function ServiceDetails($slug)
     {
-
+         
       $service =  Service::with('serviceImage', 'reviews')->where('type', 0)->where('slug', $slug)->first();
+ 
         if (!empty($service)) {
            $service_ids = Service::with('serviceImage')->where('type', 0)->where('id', '!=', $service->id)->where('category_id', $service->category_id)->pluck('id');
                 if($service->suggestion){

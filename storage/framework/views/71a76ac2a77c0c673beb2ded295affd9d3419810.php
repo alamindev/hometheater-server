@@ -37,33 +37,16 @@ Edit Product
                             <?php endif; ?>
                         </div>
                         <div class="form-group">
-                            <label for="service_type" class="form-control-label">Service Type <span
+                            <label for="service_type" class="form-control-label">SKU <span
                                     class="text-danger">*</span></label>
                             <input type="text" required id="service_type" name="service_type"
                                 value="<?php echo e($edit->service_type); ?>" class="form-control" placeholder="Example:- TV1001">
                             <?php if($errors->has('service_type')): ?>
                             <div class="text-danger"><?php echo e($errors->first('service_type')); ?></div>
                             <?php endif; ?>
-                        </div>
+                        </div> 
                         <div class="form-group">
-                            <label for="duration" class=" form-control-label">Duration <span
-                                    class="text-danger">*</span></label>
-                            <select name="duration" id="duration" required class="form-control">
-                                <option value="1" <?php if($edit->duration === 1): ?> selected <?php endif; ?>>1 Hour</option>
-                                <option value="2" <?php if($edit->duration === 2): ?> selected <?php endif; ?>>2 Hours</option>
-                                <option value="3" <?php if($edit->duration === 3): ?> selected <?php endif; ?>>3 Hours</option>
-                                <option value="4" <?php if($edit->duration === 4): ?> selected <?php endif; ?>>4 Hours</option>
-                                <option value="5" <?php if($edit->duration === 5): ?> selected <?php endif; ?>>5 Hours</option>
-                                <option value="6" <?php if($edit->duration === 6): ?> selected <?php endif; ?>>6 Hours</option>
-                                <option value="7" <?php if($edit->duration === 7): ?> selected <?php endif; ?>>7 Hours</option>
-                                <option value="8" <?php if($edit->duration === 8): ?> selected <?php endif; ?>>8 Hours - 1 day </option>
-                            </select>
-                            <?php if($errors->has('duration')): ?>
-                            <div class="text-danger"><?php echo e($errors->first('duration')); ?></div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="form-group">
-                            <label for="basic_price" class="form-control-label">Basic price <span
+                            <label for="basic_price" class="form-control-label">Regular price <span
                                     class="text-danger">*</span></label>
                             <input type="number" required id="basic_price" name="basic_price"
                                 value="<?php echo e($edit->basic_price); ?>" class="form-control">
@@ -72,7 +55,15 @@ Edit Product
                             <?php endif; ?>
                         </div>
 
-                        
+                        <div class="form-group">
+                            <label for="discount_price" class="form-control-label">Price Discount   <span
+                                    class="text-danger">(optional)</span></label>
+                            <input type="number"  maxlength="2" minlength="1" min="1" max="99" placeholder="10%"  id="discount_price" name="discount_price"
+                            value="<?php echo e($edit->discount_price); ?>" class="form-control">
+                            <?php if($errors->has('discount_price')): ?>
+                            <div class="text-danger"><?php echo e($errors->first('discount_price')); ?></div>
+                            <?php endif; ?>
+                        </div>
                        <div class="form-group" id="fonticon">
                             <label for="icon" class="form-control-label">  Icon <span class="text-danger">(fontawesome icon class
                                     name)</span></label>
@@ -158,30 +149,53 @@ Edit Product
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="seo_details" class="form-control-label">Seo Description </label>
-                            <textarea name="seo_details" cols="5" rows="5" id="seo_details"
-                                class="form-control"> <?php echo e(!empty($edit) ? $edit->seo_details : ''); ?>								</textarea>
+                        <div class="form-group pb-3">
+                            <div class="d-flex justify-content-between pb-2">
+                                <label for="image" class=" form-control-label">Colors<span
+                                        class="text-danger">(optional)</span></label>
+                                <button type="button" class="btn btn-sm btn-info add-new-color"><i
+                                        class="fa fa-plus"></i></button>
+                            </div>
+                            <div class="color">
+                                <?php
+                                $colors = explode('||#||', $edit->color);
+                                array_pop($colors); 
+                                ?>
+                                <div class="list-group">
+                                    <?php $__currentLoopData = $colors; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <div class="list-group-item d-flex align-items-center">
+                                        <?php
+                                        $color = explode('||*||', $data);  
+                                        ?>
+                                        <div class="d-flex w-100">
+                                            <div class="px-1 w-50">
+                                                <input type="text" name="color_name[]" value="<?php echo e(array_key_exists(0, $color) ? $color[0] : ''); ?>" placeholder="Color Name" class="form-control">
+                                            </div>
+                                            <div class="px-1 w-50">
+                                                <input type="text" name="color_code[]" value="<?php echo e(array_key_exists(1, $color) ? $color[1] : ''); ?>" placeholder="Color Code" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="color__trash bg-danger text-white p-2 flex-shrink-0">
+                                            <i class="fa fa-trash"></i>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="keyword" class=" form-control-label">Keyword <span class="text-danger">(keyword
-                                    by comma)</span></label>
-                            <textarea name="keyword" cols="5" rows="5" id="keyword" class="form-control"
-                                placeholder="Enter keyword by comma"> <?php echo e(!empty($edit) ? $edit->keyword : ''); ?></textarea>
-                        </div>
-                        <div class="form-group">
-                            <?php
-                            $suggestion_id = explode(',', $edit->suggestion);
-                            ?>
-                            <label for="keyword" class=" form-control-label">Suggestion</label>
-                            <select data-placeholder="Suggestion" multiple name="suggestion[]" id="suggestion"
-                                class="form-control">
-                                <option label="default"></option>
-                                <?php $__currentLoopData = App\Models\Service::where('id','!=',
-                                $edit->id)->where('type', 1)->orderBy('created_at','desc')->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $service): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <option <?php if(in_array($service->id, $suggestion_id)): ?> selected <?php endif; ?> value="<?php echo e($service->id); ?>"><?php echo e($service->title); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
+                            <label for="conditions" class="form-control-label">Condition<span
+                                    class="text-danger">*</span></label>
+                           <select name="conditions" id="conditions" required class="form-control">
+                            <option value="new" <?php if($edit->conditions === 'new'): ?> selected
+                                <?php endif; ?>>New</option>
+                            <option value="used" <?php if($edit->conditions === 'used'): ?> selected
+                                <?php endif; ?>>Used</option>
+                            <option value="out of box" <?php if($edit->conditions === 'out of box'): ?> selected
+                                <?php endif; ?>>Out of Box</option>
+                            <option value="refurbished" <?php if($edit->conditions === 'refurbished'): ?> selected
+                                <?php endif; ?>>Refurbished</option> 
+                           </select>
                         </div>
                     </div>
                 </div>
@@ -223,6 +237,31 @@ Edit Product
                             <option value="10"<?php if($edit->delivery_time === 10): ?> selected
                                 <?php endif; ?>>10 Days</option>
                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="seo_details" class="form-control-label">Seo Description </label>
+                            <textarea name="seo_details" cols="5" rows="5" id="seo_details"
+                                class="form-control"> <?php echo e(!empty($edit) ? $edit->seo_details : ''); ?>								</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="keyword" class=" form-control-label">Keyword <span class="text-danger">(keyword
+                                    by comma)</span></label>
+                            <textarea name="keyword" cols="5" rows="5" id="keyword" class="form-control"
+                                placeholder="Enter keyword by comma"> <?php echo e(!empty($edit) ? $edit->keyword : ''); ?></textarea>
+                        </div>
+                        <div class="form-group">
+                            <?php
+                            $suggestion_id = explode(',', $edit->suggestion);
+                            ?>
+                            <label for="keyword" class=" form-control-label">Suggestion</label>
+                            <select data-placeholder="Suggestion" multiple name="suggestion[]" id="suggestion"
+                                class="form-control">
+                                <option label="default"></option>
+                                <?php $__currentLoopData = App\Models\Service::where('id','!=',
+                                $edit->id)->where('type', 1)->orderBy('created_at','desc')->get(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $service): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option <?php if(in_array($service->id, $suggestion_id)): ?> selected <?php endif; ?> value="<?php echo e($service->id); ?>"><?php echo e($service->title); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
                         </div>
                     </div>
                 </div> 

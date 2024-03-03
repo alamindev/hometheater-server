@@ -118,6 +118,26 @@ jQuery(document).ready(function($) {
         $(this).closest(".feature  .list-group-item").remove();
     });
 
+    $(".add-new-color").on("click", function() {
+        let html = `<div class="list-group-item d-flex align-items-center">
+                    <div class="d-flex w-100">
+                        <div class="px-1 w-50">
+                            <input type="text" name="color_name[]" placeholder="Color Name" class="form-control">
+                        </div>
+                        <div class="px-1 w-50">
+                            <input type="text" name="color_code[]" placeholder="Color Code" class="form-control">
+                        </div>
+                    </div>
+                    <div class="color__trash bg-danger text-white p-2 flex-shrink-0">
+                        <i class="fa fa-trash"></i>
+                    </div>
+                </div>`;
+        $(".color .list-group").append(html);
+    });
+    $(document).on("click", ".color  .color__trash", function() {
+        $(this).closest(".color  .list-group-item").remove();
+    });
+
     $(document).on("click", ".add-new-question", function() {
         let element = $(".list-group-main").children();
         let html = `<div class="list-group-item d-flex align-items-center list--group-main">
