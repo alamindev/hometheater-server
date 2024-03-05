@@ -81,7 +81,7 @@ class ServiceController extends Controller
       $service =  Service::with('serviceImage', 'reviews')->where('type', 0)->where('slug', $slug)->first();
  
         if (!empty($service)) {
-           $service_ids = Service::with('serviceImage')->where('type', 0)->where('id', '!=', $service->id)->where('category_id', $service->category_id)->pluck('id');
+           $service_ids = Service::with('serviceImage', 'service')->where('type', 0)->where('id', '!=', $service->id)->where('category_id', $service->category_id)->pluck('id');
                 if($service->suggestion){
                     $collection = collect($service_ids);
                     $service_ids  = $collection->concat(explode(',', $service->suggestion))->unique();

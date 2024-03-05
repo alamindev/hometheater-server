@@ -11,17 +11,43 @@
 Dear  {{$user->first_name }} {{$user->last_name }}</br>, <br>
 
 @if($status == 'approved')
-<strong>Your appointment status in now marked as <span style="color: #4e81ee">approved</span>. We will see you on:</strong>
-<table class="table table-bordered">
-    @foreach($order->orderdate as $key=> $date)
-    <tr>
-        <td>
-            <strong>{{\Carbon\Carbon::parse($date->date)->format('d M Y')}}
-                {{ \Carbon\Carbon::parse($date->time)->format('g:i A') }}</strong>
+@if($order->type === 0)
+    <strong>Your appointment status in now marked as <span style="color: #4e81ee">approved</span>. We will see you on:</strong>
+    <table class="table table-bordered">
+        @foreach($order->orderdate as $key=> $date)
+        <tr>
+            <td>
+                <strong>{{\Carbon\Carbon::parse($date->date)->format('d M Y')}}
+                    {{ \Carbon\Carbon::parse($date->time)->format('g:i A') }}</strong>
+            </td>
+        </tr>
+        @endforeach
+    </table>
+@else 
+    <strong>Your Order Shipped! </strong>
+    <table class="table table-bordered"> 
+        <tr>
+            <td>
+                Delivery Date: 
+            </td>
+            <td> 
+                @php
+                $collection = collect($order->services);
+                $ids = $collection->pluck('service_id'); 
+                $delivery_time = \App\Models\Service::whereIn('id', $ids)->avg('delivery_time');
+                $startDate = carbon\carbon::parse($order->created_at);
+
+                $date = $startDate->copy()->addDays(round($delivery_time))->format('d M y - h:i:s A');
+            @endphp 
+            <p class="px-3 text-danger"><strong>{{ $date  }}</strong></p>
         </td>
-    </tr>
-    @endforeach
-</table>
+        </tr> 
+        <tr>
+            <td>Tracking Number: </td>
+            <td><a href="{{ $order->tracking_link }}" style="color: green; text-decoration: underline">Track you order</a></td>
+        </tr>
+    </table>
+@endif
 @elseif($status == 'cancel')
 <strong>Your appointment status in now marked as <span style="color: red">cancelled</span>.</strong>
 @elseif($status == 'complete')

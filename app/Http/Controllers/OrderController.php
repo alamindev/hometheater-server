@@ -138,8 +138,9 @@ class OrderController extends Controller
     }
     public function UpdateStatus(Request $request)
     {
-        $order = Order::with('orderdate')->where('id', $request->id)->first();
+        $order = Order::with('orderdate','services')->where('id', $request->id)->first();
         $order->status = $request->status;
+        $order->tracking_link = $request->tracking_link;
         $order->save();
         $user =  User::where('id', $order->user_id)->first();
         if ($request->status != 'pending') {

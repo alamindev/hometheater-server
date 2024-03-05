@@ -4,6 +4,8 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+use App\Models\OrderQuantity;
+
 class SingleServiceResource extends JsonResource
 {
     /**
@@ -25,6 +27,16 @@ class SingleServiceResource extends JsonResource
         if($this->discount_price){
             $discount =   round($this->basic_price - $this->basic_price * ($this->discount_price / 100), 2);
         }
+
+         $soldout = OrderQuantity::where('service_id', $this->id)->sum('quantity');
+        $avQty = 0;
+        if($this->quantity && $this->quantity > 0){
+            $avQty =  15 - ($soldout ? $soldout : 0 );
+        } else {
+            $avQty = 0;
+        }
+
+
         return [
             "id" => $this->id,
             "title" => $this->title,
@@ -32,11 +44,13 @@ class SingleServiceResource extends JsonResource
             "slug" => $this->slug,
             "type" => $this->type,
             "code" => $this->service_type,
-            "price" => $this->basic_price,
-            "discount" => $this->discount_price,
+            "price" => formatPrice($this->basic_price),
+            "discount" => $this->discount_price > 0 ? formatPrice($this->discount_price) : 0,
             "discount_price" => $discount,
             "conditions" => $this->conditions,
             "delivery_time" => $this->delivery_time,
+            "quantity_available" => $avQty > 0 ? $avQty : 0 ,
+            "sold_out" => $soldout ? $soldout : 0, 
             "colors" =>  $newColor,
             "duration" => $this->duration,
             "details" => $this->details,

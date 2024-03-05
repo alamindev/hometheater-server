@@ -76,9 +76,9 @@ class ProductController extends Controller
     {
 
         $request->validate([
-            'title' => 'required',
-            'slug' => 'required',
-            'basic_price' => 'required', 
+            'title' => 'required', 
+            'basic_price' => 'required|numeric|min:0', 
+            'quantity' => 'required', 
             'category_id' => 'required',
             'delivery_time' => 'required',
             'service_type' => 'required',
@@ -90,10 +90,11 @@ class ProductController extends Controller
 
         $product  = new Service;
         $product->title = $request->title;
-        $product->slug = Slug::createSlug($request->slug);
+        $product->slug = $request->slug ? Slug::createSlug($request->slug) : Slug::createSlug($request->title);
         $product->service_type = $request->service_type;
         $product->basic_price = $request->basic_price;
         $product->discount_price = $request->discount_price;
+        $product->quantity = $request->quantity;
         $product->conditions = $request->conditions;
         $product->type = 1;
         $product->icon = $request->icon; 
@@ -207,7 +208,8 @@ class ProductController extends Controller
   
         $request->validate([
             'title' => 'required', 
-            'basic_price' => 'required',
+            'basic_price' => 'required|numeric|min:0',
+            'quantity' => 'required',
             'delivery_time' => 'required',
             'category_id' => 'required',
             'service_type' => 'required',
@@ -219,8 +221,9 @@ class ProductController extends Controller
         $product->service_type = $request->service_type;
         $product->basic_price = $request->basic_price;
         $product->discount_price = $request->discount_price;
+        $product->quantity = $request->quantity;
         $product->conditions = $request->conditions;
-        $product->slug =   Slug::createSlug($request->slug);
+        $product->slug =   $request->slug ? Slug::createSlug($request->slug) : Slug::createSlug($request->title);
         $product->icon = $request->icon;
         $product->type = 1;
         $product->details = $request->details; 

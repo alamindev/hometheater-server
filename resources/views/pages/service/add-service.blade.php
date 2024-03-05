@@ -28,7 +28,7 @@ Add new Service
                             @endif
                         </div>
                         <div class="form-group">
-                            <label for="slug" class=" form-control-label">Slug <span class="text-danger">* (slug should
+                            <label for="slug" class=" form-control-label">Slug <span>(Optional)</span> <span class="text-danger">  (slug should
                                     small letter and no space example:- indoor-outdoor-speaker-installation-single )
                                 </span></label>
                             <input type="text" required id="slug" name="slug" value="{{ old('slug') }}"
@@ -67,7 +67,7 @@ Add new Service
                         <div class="form-group">
                             <label for="basic_price" class="form-control-label">Basic price <span
                                     class="text-danger">*</span></label>
-                            <input type="number" required id="basic_price" name="basic_price"
+                            <input type="number" min="0" step="0.01" required id="basic_price" name="basic_price"
                                 value="{{ old('basic_price') }}" class="form-control">
                             @if($errors->has('basic_price'))
                             <div class="text-danger">{{ $errors->first('basic_price') }}</div>

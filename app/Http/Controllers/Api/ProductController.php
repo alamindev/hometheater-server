@@ -22,18 +22,13 @@ class ProductController extends Controller
     {
         $products =  Service::where('type', 1)->with('serviceImage')->get();
         $service_header = ProductHeader::select('title', 'description')->first();
-        if (count($products) > 0) {
-            return response()->json([
-                'success' => true,
-                'header' => $service_header,
-                'products' => ServiceResource::collection($products),
-            ], 200);
-        }
+        
         return response()->json([
-            'errors' => [
-                "message" => 'Products not found'
-            ],
-        ], 404);
+            'success' => true,
+            'header' => $service_header,
+            'products' => count($products) > 0 ? ServiceResource::collection($products) : [],
+        ], 200);
+      
     }
 
       /**

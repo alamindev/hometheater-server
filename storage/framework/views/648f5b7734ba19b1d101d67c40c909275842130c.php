@@ -26,9 +26,7 @@ Add new Product
                             <?php endif; ?>
                         </div>
                         <div class="form-group">
-                            <label for="slug" class=" form-control-label">Slug <span class="text-danger">* (slug should
-                                    small letter and no space example:- indoor-outdoor-speaker-installation-single )
-                                </span></label>
+                            <label for="slug" class=" form-control-label">Slug <span>(Optional)</span> </label>
                             <input type="text" required id="slug" name="slug" value="<?php echo e(old('slug')); ?>"
                                 class="form-control" placeholder="Enter service slug">
                             <?php if($errors->has('slug')): ?>
@@ -53,6 +51,15 @@ Add new Product
                                 value="<?php echo e(old('basic_price')); ?>" class="form-control">
                             <?php if($errors->has('basic_price')): ?>
                             <div class="text-danger"><?php echo e($errors->first('basic_price')); ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity" class="form-control-label">Quantity<span
+                                    class="text-danger">*</span></label>
+                            <input type="number" required id="quantity" name="quantity"
+                                value="<?php echo e(old('quantity')); ?>" class="form-control">
+                            <?php if($errors->has('quantity')): ?>
+                            <div class="text-danger"><?php echo e($errors->first('quantity')); ?></div>
                             <?php endif; ?>
                         </div>
                         <div class="form-group">

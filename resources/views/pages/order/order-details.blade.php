@@ -34,13 +34,26 @@ Order details
                                     <div class="form-group pl-3 mb-0 pb-4 pb-md-0">
                                         <input type="hidden" name="id" value="{{ $order->id }}">
                                         <input type="hidden" name="order_id" value="{{ $order->order_id }}">
-                                        <select name="status" id="" class="form-control">
+                                        <select name="status" id="statusbox" class="form-control">
                                             <option value="cancel" @if($order->status =='cancel') selected @endif>Cancel</option>
                                             <option value="pending" @if($order->status =='pending') selected @endif>Pending</option>
+                                            @if($order->type === 0)
                                             <option value="approved" @if($order->status =='approved') selected @endif>Approved</option>
+                                            @else 
+                                            <option value="approved" @if($order->status =='approved') selected @endif>Shipped</option>
+                                            @endif
                                             <option value="complete" @if($order->status =='complete') selected @endif>Complete</option>
                                         </select>
                                     </div>
+                                    @if($order->status =='approved')
+                                    <div class="pl-2 ">
+                                        <input type="url" value="{{ $order->tracking_link }}" required name="tracking_link" placeholder="Tracking link" class="form-control">
+                                    </div>
+                                    @else 
+                                    <div class="pl-2 option-content" id="approvedContent" >
+                                        <input type="url" required name="tracking_link" placeholder="Tracking link" class="form-control">
+                                    </div>
+                                    @endif
                                     <button type="submit" onclick="return confirm('Are you sure!')" class="btn btn-success ml-5"> Update </button>
                                 </form>
                                 @else
@@ -332,5 +345,13 @@ Order details
     type: 'image'
     // other options
     });
+    $(document).ready(function(){
+    $('.option-content').hide(); // Hide all content initially
+    $('#statusbox').change(function(){
+        $('.option-content').hide(); // Hide all content when selection changes
+        var selectedOption = $(this).val(); // Get the selected value
+        $('#' + selectedOption + 'Content').show(); // Show content based on selected value
+    });
+});
 </script>
 @endpush

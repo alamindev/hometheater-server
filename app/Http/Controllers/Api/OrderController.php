@@ -42,16 +42,16 @@ class OrderController extends Controller
             // Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
             // $token = $request->token;
-
-            // $charge = Charge::create([
-            //     'amount' => $request->grand_total * 100, // amount in cents
-            //     'currency' => 'usd',
-            //     'description' => $note,
-            //     'source' => $token,
-            // ]); 
-            // $user = User::where('id', $request->user_id)->first();
-            // Mail::to($user)->send(new PaymentStatus($carts, $price, $user));
-
+            // if (!is_null($token)) {
+            //     $charge = Charge::create([
+            //         'amount' => $request->grand_total * 100, // amount in cents
+            //         'currency' => 'usd',
+            //         'description' => $note,
+            //         'source' => $token,
+            //     ]); 
+            //     $user = User::where('id', $request->user_id)->first();
+            //     Mail::to($user)->send(new PaymentStatus($carts, $price, $user));
+            // }
 
             $cartdatas = $request->cartdata;
             foreach($cartdatas as $key => $cartdata){

@@ -28,9 +28,7 @@ Add new Product
                             @endif
                         </div>
                         <div class="form-group">
-                            <label for="slug" class=" form-control-label">Slug <span class="text-danger">* (slug should
-                                    small letter and no space example:- indoor-outdoor-speaker-installation-single )
-                                </span></label>
+                            <label for="slug" class=" form-control-label">Slug <span>(Optional)</span> </label>
                             <input type="text" required id="slug" name="slug" value="{{ old('slug') }}"
                                 class="form-control" placeholder="Enter service slug">
                             @if($errors->has('slug'))
@@ -51,21 +49,33 @@ Add new Product
                         <div class="form-group">
                             <label for="basic_price" class="form-control-label">Regular price <span
                                     class="text-danger">*</span></label>
-                            <input type="number" required id="basic_price" name="basic_price"
+                            <input type="number" min="0" step="0.01"  required id="basic_price" name="basic_price"
                                 value="{{ old('basic_price') }}" class="form-control">
                             @if($errors->has('basic_price'))
                             <div class="text-danger">{{ $errors->first('basic_price') }}</div>
                             @endif
                         </div>
+                        
                         <div class="form-group">
                             <label for="discount_price" class="form-control-label">Price Discount <span
                                     class="text-danger">(optional)</span></label>
-                            <input type="number" maxlength="2" minlength="1" min="1" max="99" placeholder="10%" id="discount_price" name="discount_price"
+                            <input type="number" min="0" step="0.01"   placeholder="10%" id="discount_price" name="discount_price"
                                 value="{{ old('discount_price') }}" class="form-control">
                             @if($errors->has('discount_price'))
                             <div class="text-danger">{{ $errors->first('discount_price') }}</div>
                             @endif
                         </div>
+
+                        <div class="form-group">
+                            <label for="quantity" class="form-control-label">Quantity<span
+                                    class="text-danger">*</span></label>
+                            <input type="number"  required id="quantity" name="quantity"
+                                value="{{ old('quantity') }}" class="form-control">
+                            @if($errors->has('quantity'))
+                            <div class="text-danger">{{ $errors->first('quantity') }}</div>
+                            @endif
+                        </div>
+                        
                         
                         <div class="form-group">
                             <label for="category" class=" form-control-label">Select Category <span

@@ -76,9 +76,8 @@ class ServiceController extends Controller
     {
 
         $request->validate([
-            'title' => 'required',
-            'slug' => 'required',
-            'basic_price' => 'required',
+            'title' => 'required', 
+            'basic_price' => 'required|numeric|min:0',
             'duration' => 'required',
             'category_id' => 'required',
             'service_type' => 'required|min:6|max:7',
@@ -87,7 +86,7 @@ class ServiceController extends Controller
         ]);
         $service  = new Service;
         $service->title = $request->title;
-        $service->slug =   Slug::createSlug($request->slug);
+        $service->slug = $request->slug ? Slug::createSlug($request->slug) : Slug::createSlug($request->title);
         $service->service_type = $request->service_type;
         $service->basic_price = $request->basic_price;
         $service->icon = $request->icon;
@@ -209,7 +208,7 @@ class ServiceController extends Controller
         $request->validate([
             'title' => 'required',
             'duration' => 'required',
-            'basic_price' => 'required',
+            'basic_price' => 'required|numeric|min:0',
             'category_id' => 'required',
             'service_type' => 'required|min:6|max:7',
         ]);
@@ -218,7 +217,7 @@ class ServiceController extends Controller
         $service->title = $request->title;
         $service->service_type = $request->service_type;
         $service->basic_price = $request->basic_price;
-        $service->slug =   Slug::createSlug($request->slug);
+        $service->slug =  $request->slug ? Slug::createSlug($request->slug) : Slug::createSlug($request->title);
         $service->icon = $request->icon;
         $service->details = $request->details; 
         $service->seo_details = $request->seo_details;

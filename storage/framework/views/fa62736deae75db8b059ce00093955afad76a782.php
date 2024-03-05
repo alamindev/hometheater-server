@@ -33,13 +33,26 @@ Order details
                                     <div class="form-group pl-3 mb-0 pb-4 pb-md-0">
                                         <input type="hidden" name="id" value="<?php echo e($order->id); ?>">
                                         <input type="hidden" name="order_id" value="<?php echo e($order->order_id); ?>">
-                                        <select name="status" id="" class="form-control">
+                                        <select name="status" id="statusbox" class="form-control">
                                             <option value="cancel" <?php if($order->status =='cancel'): ?> selected <?php endif; ?>>Cancel</option>
                                             <option value="pending" <?php if($order->status =='pending'): ?> selected <?php endif; ?>>Pending</option>
+                                            <?php if($order->type === 0): ?>
                                             <option value="approved" <?php if($order->status =='approved'): ?> selected <?php endif; ?>>Approved</option>
+                                            <?php else: ?> 
+                                            <option value="approved" <?php if($order->status =='approved'): ?> selected <?php endif; ?>>Shipped</option>
+                                            <?php endif; ?>
                                             <option value="complete" <?php if($order->status =='complete'): ?> selected <?php endif; ?>>Complete</option>
                                         </select>
                                     </div>
+                                    <?php if($order->status =='approved'): ?>
+                                    <div class="pl-2 ">
+                                        <input type="url" value="<?php echo e($order->tracking_link); ?>" required name="tracking_link" placeholder="Tracking link" class="form-control">
+                                    </div>
+                                    <?php else: ?> 
+                                    <div class="pl-2 option-content" id="approvedContent" >
+                                        <input type="url" required name="tracking_link" placeholder="Tracking link" class="form-control">
+                                    </div>
+                                    <?php endif; ?>
                                     <button type="submit" onclick="return confirm('Are you sure!')" class="btn btn-success ml-5"> Update </button>
                                 </form>
                                 <?php else: ?>
@@ -336,6 +349,14 @@ Order details
     type: 'image'
     // other options
     });
+    $(document).ready(function(){
+    $('.option-content').hide(); // Hide all content initially
+    $('#statusbox').change(function(){
+        $('.option-content').hide(); // Hide all content when selection changes
+        var selectedOption = $(this).val(); // Get the selected value
+        $('#' + selectedOption + 'Content').show(); // Show content based on selected value
+    });
+});
 </script>
 <?php $__env->stopPush(); ?>
 
