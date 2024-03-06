@@ -44,14 +44,16 @@ Order details
                                             <option value="complete" <?php if($order->status =='complete'): ?> selected <?php endif; ?>>Complete</option>
                                         </select>
                                     </div>
-                                    <?php if($order->status =='approved'): ?>
-                                    <div class="pl-2 ">
-                                        <input type="url" value="<?php echo e($order->tracking_link); ?>" required name="tracking_link" placeholder="Tracking link" class="form-control">
-                                    </div>
-                                    <?php else: ?> 
-                                    <div class="pl-2 option-content" id="approvedContent" >
-                                        <input type="url" required name="tracking_link" placeholder="Tracking link" class="form-control">
-                                    </div>
+                                    <?php if($order->type === 1): ?>
+                                        <?php if($order->status =='approved'): ?>
+                                        <div class="pl-2 ">
+                                            <input type="url" value="<?php echo e($order->tracking_link); ?>" required name="tracking_link" placeholder="Tracking link" class="form-control">
+                                        </div>
+                                        <?php else: ?> 
+                                        <div class="pl-2 option-content" id="approvedContent" >
+                                            <input type="url" required name="tracking_link" placeholder="Tracking link" class="form-control">
+                                        </div>
+                                        <?php endif; ?>
                                     <?php endif; ?>
                                     <button type="submit" onclick="return confirm('Are you sure!')" class="btn btn-success ml-5"> Update </button>
                                 </form>

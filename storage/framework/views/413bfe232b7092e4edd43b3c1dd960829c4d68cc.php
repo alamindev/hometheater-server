@@ -12,42 +12,32 @@ Dear  <?php echo e($user->first_name); ?> <?php echo e($user->last_name); ?></br
 
 <?php if($status == 'approved'): ?>
 <?php if($order->type === 0): ?>
-    <strong>Your appointment status in now marked as <span style="color: #4e81ee">approved</span>. We will see you on:</strong>
-    <table class="table table-bordered">
-        <?php $__currentLoopData = $order->orderdate; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=> $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <tr>
-            <td>
-                <strong><?php echo e(\Carbon\Carbon::parse($date->date)->format('d M Y')); ?>
-
-                    <?php echo e(\Carbon\Carbon::parse($date->time)->format('g:i A')); ?></strong>
-            </td>
-        </tr>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-    </table>
+<strong>Your appointment status in now marked as <span style="color: #4e81ee">approved</span>. We will see you on:</strong>
+<table class="table table-bordered">
+<?php $__currentLoopData = $order->orderdate; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=> $date): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+<tr>
+<td>
+<strong><?php echo e(\Carbon\Carbon::parse($date->date)->format('d M Y')); ?>  <?php echo e(\Carbon\Carbon::parse($date->time)->format('g:i A')); ?></strong>
+</td>
+</tr>
+<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+</table>
 <?php else: ?> 
-    <strong>Your Order Shipped! </strong>
-    <table class="table table-bordered"> 
-        <tr>
-            <td>
-                Delivery Date: 
-            </td>
-            <td> 
-                <?php
-                $collection = collect($order->services);
-                $ids = $collection->pluck('service_id'); 
-                $delivery_time = \App\Models\Service::whereIn('id', $ids)->avg('delivery_time');
-                $startDate = carbon\carbon::parse($order->created_at);
-
-                $date = $startDate->copy()->addDays(round($delivery_time))->format('d M y - h:i:s A');
-            ?> 
-            <p class="px-3 text-danger"><strong><?php echo e($date); ?></strong></p>
-        </td>
-        </tr> 
-        <tr>
-            <td>Tracking Number: </td>
-            <td><a href="<?php echo e($order->tracking_link); ?>" style="color: green; text-decoration: underline">Track you order</a></td>
-        </tr>
-    </table>
+<strong>Your Order Shipped! </strong>
+<table class="table table-bordered"> 
+<tr>
+<td>
+Delivery Date: 
+</td>
+<td>  
+<p class="px-3 text-danger"><strong><?php echo e($date); ?></strong></p>
+</td>
+</tr> 
+<tr>
+<td>Tracking Number: </td>
+<td><a href="<?php echo e($order->tracking_link); ?>" style="color: green; text-decoration: underline">Track you order</a></td>
+</tr>
+</table>
 <?php endif; ?>
 <?php elseif($status == 'cancel'): ?>
 <strong>Your appointment status in now marked as <span style="color: red">cancelled</span>.</strong>
@@ -65,7 +55,7 @@ Thanks, <br>
 
 <?php if($status == 'complete'): ?>
 <div style="text-align: center; withd: 100%">
-    <a style="margin-top: 20px;padding: 6px 20px; border-radius:5px; background-color: #4e81ee; color: white; display:inline-block; text-decoration: none;"
+<a style="margin-top: 20px;padding: 6px 20px; border-radius:5px; background-color: #4e81ee; color: white; display:inline-block; text-decoration: none;"
         href="https://hometheaterproz.com/users/booking/<?php echo e($order->id); ?>/review">Leave a review</a>
 </div>
 <?php endif; ?>

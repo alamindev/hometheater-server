@@ -45,14 +45,16 @@ Order details
                                             <option value="complete" @if($order->status =='complete') selected @endif>Complete</option>
                                         </select>
                                     </div>
-                                    @if($order->status =='approved')
-                                    <div class="pl-2 ">
-                                        <input type="url" value="{{ $order->tracking_link }}" required name="tracking_link" placeholder="Tracking link" class="form-control">
-                                    </div>
-                                    @else 
-                                    <div class="pl-2 option-content" id="approvedContent" >
-                                        <input type="url" required name="tracking_link" placeholder="Tracking link" class="form-control">
-                                    </div>
+                                    @if($order->type === 1)
+                                        @if($order->status =='approved')
+                                        <div class="pl-2 ">
+                                            <input type="url" value="{{ $order->tracking_link }}" required name="tracking_link" placeholder="Tracking link" class="form-control">
+                                        </div>
+                                        @else 
+                                        <div class="pl-2 option-content" id="approvedContent" >
+                                            <input type="url" required name="tracking_link" placeholder="Tracking link" class="form-control">
+                                        </div>
+                                        @endif
                                     @endif
                                     <button type="submit" onclick="return confirm('Are you sure!')" class="btn btn-success ml-5"> Update </button>
                                 </form>
