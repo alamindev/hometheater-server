@@ -36,17 +36,16 @@ class DashboardController extends Controller
         ], 200);
     }
     public function RecentOrders($id)
-    { 
-
+    {  
         if ($id) {
-            $booking = Order::with('prices', 'quantity', 'services', 'images', 'questions', 'orderdate')->where('user_id', $id)->where('type', 0)->latest()->first();
-            $product = Order::with('prices', 'quantity', 'services', 'images', 'questions', 'orderdate')->where('user_id', $id)->where('type', 1)->latest()->first();
-            $user = User::where('id', $id)->first();
+             $booking = Order::with('address','prices', 'quantity', 'services', 'images', 'questions', 'orderdate')->where('user_id', $id)->where('type', 0)->latest()->first();
+             $product = Order::with('address','prices', 'quantity', 'services', 'images', 'questions', 'orderdate')->where('user_id', $id)->where('type', 1)->latest()->first();
+             $user = User::where('id', $id)->first();
             if ($booking || $product) {
                 return response()->json([
                     'success' => true,
-                    'product' =>   new BookingDetailsResource($product),
-                    'booking' => new BookingDetailsResource($booking),
+                    'product' => $product ? new BookingDetailsResource($product) : null,
+                    'booking' => $booking ? new BookingDetailsResource($booking) : null ,
                     'user' => $user,
                 ], 200);
             } 

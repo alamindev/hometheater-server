@@ -119,7 +119,7 @@ class OrderController extends Controller
     }
     public function OrderDetails($id)
     {
-        $order = Order::with('user', 'quantity', 'services', 'images', 'orderdate')->where('order_id', $id)->first();
+        $order = Order::with('address', 'user', 'quantity', 'services', 'images', 'orderdate')->where('order_id', $id)->first();
         if ($order) {
             return view('pages.order.order-details', compact('order'));
         }

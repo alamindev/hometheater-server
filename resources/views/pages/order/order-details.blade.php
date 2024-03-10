@@ -223,6 +223,25 @@ Order details
                     </div>
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4>Delivery Location</h4>
+                </div>
+                <div class="card-body card-block"> 
+                    @if($order->address)
+                    <h4>{{ $order->address->address ? $order->address->address . ',' : $order->user->address. ','  }}
+                        {{ $order->address->city ? $order->address->city . ',' : $order->user->city. ','  }}
+                        {{ $order->address->state ? $order->address->state . ',' : $order->user->state. ','  }}
+                        {{ $order->address->zipcode ? $order->address->zipcode . ',' : $order->user->zipcode. ','  }} USA</h4>
+                        @else <h4>
+                        {{ $order->user->address ? $order->user->address. ',': ''}}
+                        {{ $order->user->city ? $order->user->city. ',': ''}}
+                        {{ $order->user->state ? $order->user->state. ',': ''}}
+                        {{ $order->user->zipcode ? $order->user->zipcode. ',': ''}} USA </h4>
+
+                        @endif
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>User Details</h4>
                 </div>
                 <div class="card-body card-block">

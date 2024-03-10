@@ -223,6 +223,31 @@ Order details
                     </div>
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4>Delivery Location</h4>
+                </div>
+                <div class="card-body card-block"> 
+                    <?php if($order->address): ?>
+                    <h4><?php echo e($order->address->address ? $order->address->address . ',' : $order->user->address. ','); ?>
+
+                        <?php echo e($order->address->city ? $order->address->city . ',' : $order->user->city. ','); ?>
+
+                        <?php echo e($order->address->state ? $order->address->state . ',' : $order->user->state. ','); ?>
+
+                        <?php echo e($order->address->zipcode ? $order->address->zipcode . ',' : $order->user->zipcode. ','); ?> USA</h4>
+                        <?php else: ?> <h4>
+                        <?php echo e($order->user->address ? $order->user->address. ',': ''); ?>
+
+                        <?php echo e($order->user->city ? $order->user->city. ',': ''); ?>
+
+                        <?php echo e($order->user->state ? $order->user->state. ',': ''); ?>
+
+                        <?php echo e($order->user->zipcode ? $order->user->zipcode. ',': ''); ?> USA </h4>
+
+                        <?php endif; ?>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>User Details</h4>
                 </div>
                 <div class="card-body card-block">

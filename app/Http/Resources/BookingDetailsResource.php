@@ -38,9 +38,10 @@ class BookingDetailsResource extends JsonResource
             'created_at' => $this->created_at,
             'datetime' => $this->orderdate,
             'delivery_time' => $this->delivery_time,
-            'address' => $this->getAddress($this->user), 
+            'address' => $this->getAddress($this->user, $this->whenLoaded('address')), 
             'images' => ImageResource::collection($this->whenLoaded('images')),
             'services' => $this->MainServices($this->whenLoaded('services')->pluck('service_id'), $this->id),
+            'service_ids' => $this->whenLoaded('services')->pluck('service_id'),
             'questions' => $this->MainQuestion($this->whenLoaded('questions'), $this->whenLoaded('services')),
             'service_type' => Service::whereIn('id', $this->services->pluck('service_id'))->pluck('service_type'),
         ];
@@ -89,8 +90,17 @@ class BookingDetailsResource extends JsonResource
         }
         return $newQuestion;
     }
-    public function getAddress($user)
+    public function getAddress($user, $address)
     {
-        return $user->address . ', ' . $user->city . ', ' . $user->state . ', ' . $user->zipcode . ', USA';
+        if($address){
+            $addr = $address->address ? $address->address : $user->address;
+            $city = $address->city ? $address->city : $user->city;
+            $state = $address->state ? $address->state : $user->state;
+            $zipcode = $address->zipcode ? $address->zipcode : $user->zipcode;
+            return  $addr . ', ' . $city . ', ' . $state . ', ' . $zipcode . ', USA';
+        }else{
+            return  $user->address . ', ' . $user->city . ', ' . $user->state . ', ' . $user->zipcode . ', USA';
+        }
+          
     }
 }

@@ -27,6 +27,7 @@ Route::get('/cache-clear', function () {
     Artisan::call('route:clear');
     Artisan::call('view:clear');
     Artisan::call('config:cache');
+    Artisan::call('config:clear');
     return 'ok';
 });
 Route::redirect('/register', '/login');

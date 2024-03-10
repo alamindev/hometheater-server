@@ -138,7 +138,7 @@ class BookingController extends Controller
     public function BookingDetails(Request $request, $id)
     {
         if ($request->has('auth_id')) {
-            $order = Order::with('prices', 'quantity', 'services', 'images', 'questions', 'orderdate')->where('user_id', $request->auth_id)->where('id', $id)->first();
+         $order = Order::with('address','prices', 'quantity', 'services', 'images', 'questions', 'orderdate')->where('user_id', $request->auth_id)->where('id', $id)->first();
             if ($order) {
                 return response()->json([
                     'success' => true,
@@ -155,9 +155,10 @@ class BookingController extends Controller
     }
     public function Canceled(Request $request)
     {
-        $order = Order::with('quantity', 'services', 'images', 'questions', 'orderdate')->where('id', $request->id)->where('user_id', $request->user_id)->first();
-        $order->status = 'cancel';
-        $order->save();
+      
+         $order = Order::with('address','quantity', 'services', 'images', 'questions', 'orderdate')->where('id', $request->id)->where('user_id', $request->user_id)->first();
+            $order->status = 'cancel';
+            $order->save();
         return response()->json([
             'success' => true,
             'booking' => new BookingDetailsResource($order),

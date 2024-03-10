@@ -10,7 +10,7 @@
 @endslot
 Hi <b>{{$user->first_name }} {{$user->last_name }}</b></br>, <br>
 
-<p>Your transaction of <strong>{{$price}}</strong> for <strong>
+<p>Your transaction of $<strong>{{$price}}</strong> for <strong>
     @foreach($services as $key => $service)
             {{ $key + 1 }}. {{$service->title}},
     @endforeach

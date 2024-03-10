@@ -37,7 +37,9 @@ Route::group(['middleware' => 'jwt.auth'], function () {
     Route::get('/calendar/attributes',  [App\Http\Controllers\Api\CheckoutController::class, 'CalendarAttr']);
     Route::post('/calendar/time',  [App\Http\Controllers\Api\CheckoutController::class, 'CalendarTime']);
     Route::post('/order/store',  [App\Http\Controllers\Api\OrderController::class, 'finishedCheckout']);
+    Route::post('/order/payment-intents',  [App\Http\Controllers\Api\OrderController::class, 'StripePaymentIntents']);
 
+    Route::get('/cart/payment-intents',  [App\Http\Controllers\Api\OrderController::class, 'GetStripeToken']);
     Route::get('/users/dashboard/{id}',  [App\Http\Controllers\Api\DashboardController::class, 'FetchDatas']); 
     Route::get('/users/recent-orders/{id}',  [App\Http\Controllers\Api\DashboardController::class, 'RecentOrders']); 
     Route::get('/bookings/{id}',  [App\Http\Controllers\Api\BookingController::class, 'Bookings']);
@@ -115,6 +117,7 @@ Route::get('service/search',  [App\Http\Controllers\Api\SearchController::class,
 Route::post('cart/suggest',  [App\Http\Controllers\Api\CartController::class, 'index']);
 Route::get('cart/taxes',  [App\Http\Controllers\Api\CartController::class, 'Taxes']);
 Route::get('/cart/booking/{id}',  [App\Http\Controllers\Api\CartController::class, 'getService']);
+
 
 Route::post('anything',  function () {
     return true;

@@ -17,172 +17,205 @@ use App\Models\Service;
 use App\Models\OrderPrice;
 use App\Models\OrderVarient;
 use App\Models\User;
+use App\Models\OrderAddress;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Str;
 use Haruncpi\LaravelIdGenerator\IdGenerator;
 use Illuminate\Support\Facades\Mail;
-use Stripe\Stripe;
-use Stripe\Charge; 
+use Stripe\Stripe; 
 
 class OrderController extends Controller
 {
     public function finishedCheckout(Request $request)
-    {
+    { 
  
-        $carts = collect($request->carts); 
+      $carts = collect($request->carts); 
 
         $note = '';
         foreach ($carts as $cart) {
             $note .= $cart['title'] . ', ';
-        }
+        } 
+        try {  
 
-        try {
-            // Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-
-            // $token = $request->token;
-            // if (!is_null($token)) {
-            //     $charge = Charge::create([
-            //         'amount' => $request->grand_total * 100, // amount in cents
-            //         'currency' => 'usd',
-            //         'description' => $note,
-            //         'source' => $token,
-            //     ]); 
-            //     $user = User::where('id', $request->user_id)->first();
-            //     Mail::to($user)->send(new PaymentStatus($carts, $price, $user));
-            // }
-
-            $cartdatas = $request->cartdata;
-            foreach($cartdatas as $key => $cartdata){
-                if($key === 'services'){
-                    if(count($cartdata) > 0){
-                        $today = date("Ymd");
-                        $rand = strtoupper(substr(uniqid(sha1(time())), 0, 2));
-                        $unique = $today . $rand . strtoupper($key);
-                        
-                        $total = collect($cartdata)->pluck('price')->sum();
-                        $addon_price = $request->addon_price;
-    
-                        $order = new Order();
-                        $order->order_id = $unique; 
-                        $order->price = $total;   
-                        
-                        if(!empty($request->discount)){
-                            $order->discount = $request->discount; 
-                            $discount = ($total + $addon_price) * ($order->discount / 100);
-                            $order->discount_price = $discount;
-                                
-                        }
-    
-                        $order->addon_price =  $addon_price;
-                        $order->payment = $request->payment;
-                        if($order->payment === 'online'){
-                            $order->taxes = $request->taxes;
-                        }
-                        $order->type = 0;
-                        $order->user_id = $request->user_id;
-                        $order->save(); 
-                            foreach ($cartdata as $cart) {
-                                $item = new OrderQuantity();
-                                $item->quantity = $cart['item'];
-                                $item->order_id = $order->id;
-                                $item->service_id = $cart['id'];
-                                $item->save();
-                    
-                                $item_price = new OrderPrice();
-                                $item_price->item_price = $cart['price'];
-                                $item_price->order_id = $order->id;
-                                $item_price->service_id = $cart['id'];
-                                $item_price->save();
-
-                                $service = new OrderService();
-                                $service->order_id = $order->id;
-                                $service->service_id = $cart['id'];
-                                $service->save();
+        $order = Order::where('payment_id', $request->payment_id)->where('payment_id', '!=', null)->get(); 
+            if(count($order) === 0){ 
+                $cartdatas = $request->cartdata;
+                foreach($cartdatas as $key => $cartdata){
+                    if($key === 'services'){
+                        if(count($cartdata) > 0){
+                            $today = date("Ymd");
+                            $rand = strtoupper(substr(uniqid(sha1(time())), 0, 2));
+                            $unique = $today . $rand . strtoupper($key);
+                            
+                            $total = collect($cartdata)->pluck('price')->sum();
+                            $addon_price = $request->addon_price;
+        
+                            $order = new Order();
+                            $order->order_id = $unique; 
+                            $order->payment_id = $request->payment_id; 
+                            $order->price = $total;   
+                            
+                            if(!empty($request->discount)){
+                                $order->discount = $request->discount; 
+                                $discount = ($total + $addon_price) * ($order->discount / 100);
+                                $order->discount_price = $discount;
+                                    
                             }
-                            Answer($request,  $order->id);
-                            DateTime($request,  $order->id);
-                            OrderImage($request,  $order->id);
-    
-                        } 
-                }else{
-                    if(count($cartdata) > 0){
-                        $today = date("Ymd");
-                        $rand = strtoupper(substr(uniqid(sha1(time())), 0, 2));
-                        $unique = $today . $rand . strtoupper($key);
-                        $total = collect($cartdata)->pluck('price')->sum();
-
-                         $ids = collect($cartdata)->pluck('ids');  
-                         $uniqueIds = collect($ids)->flatten()->unique();    
-                         $delivery_time = Service::whereIn('id', $uniqueIds)->avg('delivery_time');
-                        $startDate =  Carbon::now();
-
-                        $date = $startDate->copy()->addDays(round($delivery_time))->format('d M y - h:i:s A');
+        
+                            $order->addon_price =  $addon_price;
+                            $order->payment = $request->payment;
+                            if($order->payment === 'online'){
+                                $order->taxes = $request->taxes;
+                            }
+                            $order->type = 0;
+                            $order->user_id = $request->user_id;
+                            $order->save(); 
+                                foreach ($cartdata as $cart) {
+                                    $item = new OrderQuantity();
+                                    $item->quantity = $cart['item'];
+                                    $item->order_id = $order->id;
+                                    $item->service_id = $cart['id'];
+                                    $item->save();
                         
-                        $order = new Order();
-                        $order->order_id = $unique; 
-                        $order->price = $total; 
-                        
-                        if(!empty($request->discount)){
-                            $order->discount = $request->discount; 
-                            $discount = $total * ($order->discount / 100);
-                            $order->discount_price = $discount ;
-                        }
-    
-                        $order->user_id = $request->user_id;
-                        $order->delivery_time = $date;
-                        $order->payment = 'online';
-                        $order->type = 1;
-                        $order->taxes = $request->taxes;
-                        $order->save();
-    
-                            foreach ($cartdata as $cart) {
-                                $item = new OrderQuantity();
-                                $item->quantity = $cart['item'];
-                                $item->order_id = $order->id;
-                                $item->service_id = $cart['id'];
-                                $item->save();
-                                
-                                $item_price = new OrderPrice();
-                                $item_price->item_price = $cart['price'];
-                                $item_price->order_id = $order->id;
-                                $item_price->service_id = $cart['id'];
-                                $item_price->save();
+                                    $item_price = new OrderPrice();
+                                    $item_price->item_price = $cart['price'];
+                                    $item_price->order_id = $order->id;
+                                    $item_price->service_id = $cart['id'];
+                                    $item_price->save();
 
-                                if($cart['varient'] !== false){
-                                    $varients = new OrderVarient();
-                                    $varients->name = $cart['varient']['name'];
-                                    $varients->value = $cart['varient']['value'];
-                                    $varients->order_id = $order->id;
-                                    $varients->service_id = $cart['id'];
-                                    $varients->save();
+                                    $service = new OrderService();
+                                    $service->order_id = $order->id;
+                                    $service->service_id = $cart['id'];
+                                    $service->save();
                                 }
-                                $service = new OrderService();
-                                $service->order_id = $order->id;
-                                $service->service_id = $cart['id'];
-                                $service->save();
-                            }  
+                                Answer($request,  $order->id);
+                                DateTime($request,  $order->id);
+                                OrderImage($request,  $order->id);
+                                OrderAddress($request,  $order->id);
+        
+                            } 
+                    }else{
+                        if(count($cartdata) > 0){
+                            $today = date("Ymd");
+                            $rand = strtoupper(substr(uniqid(sha1(time())), 0, 2));
+                            $unique = $today . $rand . strtoupper($key);
+                            $total = collect($cartdata)->pluck('price')->sum();
+
+                            $ids = collect($cartdata)->pluck('ids');  
+                            $uniqueIds = collect($ids)->flatten()->unique();    
+                            $delivery_time = Service::whereIn('id', $uniqueIds)->avg('delivery_time');
+                            $startDate =  Carbon::now();
+
+                            $date = $startDate->copy()->addDays(round($delivery_time))->format('d M y - h:i:s A');
+                            
+                            $order = new Order();
+                            $order->order_id = $unique; 
+                            $order->payment_id = $request->payment_id; 
+                            $order->price = $total; 
+                            
+                            if(!empty($request->discount)){
+                                $order->discount = $request->discount; 
+                                $discount = $total * ($order->discount / 100);
+                                $order->discount_price = $discount ;
+                            }
+        
+                            $order->user_id = $request->user_id;
+                            $order->delivery_time = $date;
+                            $order->payment = 'online';
+                            $order->type = 1;
+                            $order->taxes = $request->taxes;
+                            $order->save();
+                            
+                                foreach ($cartdata as $cart) {
+                                    $item = new OrderQuantity();
+                                    $item->quantity = $cart['item'];
+                                    $item->order_id = $order->id;
+                                    $item->service_id = $cart['id'];
+                                    $item->save();
+                                    
+                                    $item_price = new OrderPrice();
+                                    $item_price->item_price = $cart['price'];
+                                    $item_price->order_id = $order->id;
+                                    $item_price->service_id = $cart['id'];
+                                    $item_price->save();
+
+                                    if($cart['varient'] !== false){
+                                        $varients = new OrderVarient();
+                                        $varients->name = $cart['varient']['name'];
+                                        $varients->value = $cart['varient']['value'];
+                                        $varients->order_id = $order->id;
+                                        $varients->service_id = $cart['id'];
+                                        $varients->save();
+                                    }
+                                    $service = new OrderService();
+                                    $service->order_id = $order->id;
+                                    $service->service_id = $cart['id'];
+                                    $service->save();
+                                }  
+                                OrderAddress($request,  $order->id);
+                        }
                     }
-                }
-            }  
-            $user = User::where('id', $request->user_id)->first();
-     
-    
-            // $setting = Setting::first();
-            // $orderfetch = Order::where('id', $order->id)->with('services', 'orderdate')->first();
-            // if ($setting) {
-            //    Mail::to($setting->contact_email)->send(new AdminStatus($orderfetch, $user,  false));
-            // }
-            // Mail::to($user)->send(new UserNotification($orderfetch, $user));
-    
-    
-    
+                }  
+
+
+                $user = User::where('id', $request->user_id)->first();
+        
+                // Mail::to($user)->send(new PaymentStatus($carts, $request->grand_total, $user));
+            
+                // $setting = Setting::first();
+                // $orderfetch = Order::where('id', $order->id)->with('services', 'orderdate')->first();
+                // if ($setting) {
+                //    Mail::to($setting->contact_email)->send(new AdminStatus($orderfetch, $user,  false));
+                // }
+                // Mail::to($user)->send(new UserNotification($orderfetch, $user));
+        
+        
+        
+                return response()->json([
+                    'success' => true,
+                    'type' => count($cartdatas['services']) > 0 ? 0 : 1,
+                ], 200);
+            }
+            
             return response()->json([
-                'success' => true,
-                'type' => count($cartdatas['services']) > 0 ? 0 : 1,
+                'success' => false, 
             ], 200);
 
+        } catch (\Exception $e) { 
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong. Please contact your administrator',
+                'type' => $e->getMessage()
+            ], 200); 
+        }  
+    }
+    
+    public function StripePaymentIntents(Request $request)
+        {
+            $publisher_key = env('STRIPE_PUBLISHABLE_KEY');
+            $secret_key = env('STRIPE_SECRET_KEY');  
+
+            try { 
+                $stripe = new \Stripe\StripeClient($secret_key);
+                $customer = $stripe->customers->create([
+                    'email' => $request->email,
+                    'name' => $request->name
+                ]); 
+               
+              $intents =  $stripe->paymentIntents->create([
+                    'automatic_payment_methods' => ['enabled' => true, 'allow_redirects' => 'never'],
+                    'amount' => $request->grand_total * 100,
+                    'currency' => 'usd',
+                    'customer' => $customer->id,
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'secret' => $intents->client_secret  ,
+                    'publisher' => $publisher_key,  
+                ], 200);  
 
         } catch (\Exception $e) { 
             return response()->json([
@@ -245,4 +278,14 @@ function OrderImage($request, $order_id)
             $img->save();
         }
     }
+}
+function OrderAddress($request, $order_id)
+{ 
+    $address = new OrderAddress();
+    $address->order_id = $order_id; 
+    $address->address = $request->address  ?  $request->address['address'] : null;  
+    $address->city = $request->address  ?  $request->address['city'] : null;  
+    $address->state = $request->address ?  $request->address['state'] : null;  
+    $address->zipcode = $request->address ?  $request->address['zipcode'] : null; 
+    $address->save();
 }

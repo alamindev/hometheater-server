@@ -17,6 +17,10 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function address()
+    {
+        return $this->hasOne(OrderAddress::class);
+    }
     public function quantity()
     {
         return $this->hasMany(OrderQuantity::class);
