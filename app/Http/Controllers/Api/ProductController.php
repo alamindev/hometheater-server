@@ -30,6 +30,27 @@ class ProductController extends Controller
         ], 200);
       
     }
+    public function CheckQuantity(Request $request)
+    { 
+            $products = collect($request->products);  
+            $product_ids = $products->pluck('id');
+            $query = Service::query();
+            $query->whereIn('id', $product_ids);
+            foreach ($products as $product) {   
+                $query->where('quantity', '>=', $product['item']);
+            }
+            
+            $results = $query->get();
+         
+            if(count($results) === count($products)){
+                return response()->json([
+                    'success' => true, 
+                ], 200);
+            }
+            return response()->json([
+                'success' => false, 
+            ], 200); 
+    }
 
       /**
      *
@@ -73,4 +94,7 @@ class ProductController extends Controller
             ],
         ], 404);
     }
+
+
+
 }

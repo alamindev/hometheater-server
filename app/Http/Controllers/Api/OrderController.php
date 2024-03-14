@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Mail\AdminStatus;
-use App\Mail\PaymentStatus;
+use App\Mail\AdminNotificationNewOrder; 
 use App\Mail\UserNotification;
 use App\Models\Order;
 use App\Models\OrderDate;
@@ -153,23 +152,24 @@ class OrderController extends Controller
                                     $service->order_id = $order->id;
                                     $service->service_id = $cart['id'];
                                     $service->save();
+                                    
+                                    Service::where('type', 1)->where('id', $cart['id'])->decrement('quantity', $cart['item']);
                                 }  
                                 OrderAddress($request,  $order->id);
+                                
                         }
                     }
                 }  
 
 
-                $user = User::where('id', $request->user_id)->first();
-        
-                // Mail::to($user)->send(new PaymentStatus($carts, $request->grand_total, $user));
-            
-                // $setting = Setting::first();
-                // $orderfetch = Order::where('id', $order->id)->with('services', 'orderdate')->first();
+                // $user = User::where('id', $request->user_id)->first();
+          
+                // $setting = Setting::first(); 
+                
                 // if ($setting) {
-                //    Mail::to($setting->contact_email)->send(new AdminStatus($orderfetch, $user,  false));
+                //    Mail::to($setting->contact_email)->send(new AdminNotificationNewOrder($request->cartdata, $request->datetime, $user));
                 // }
-                // Mail::to($user)->send(new UserNotification($orderfetch, $user));
+                // Mail::to($user)->send(new UserNotification($request->cartdata, $request->datetime, $user));
         
         
         

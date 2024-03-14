@@ -27,8 +27,15 @@ class SingleServiceResource extends JsonResource
         if($this->discount_price){
             $discount =   round($this->basic_price - $this->basic_price * ($this->discount_price / 100), 2);
         }
+        $avQty = 0;
+        $soldout = OrderQuantity::where('service_id', $this->id)->sum('quantity');
 
-         $soldout = OrderQuantity::where('service_id', $this->id)->sum('quantity');
+        if($this->quantity && $this->quantity > 0){
+            $avQty =  $this->quantity - ($soldout ? $soldout : 0 );
+        } else {
+            $avQty = 0;
+        }
+
          
         return [
             "id" => $this->id,
@@ -42,7 +49,7 @@ class SingleServiceResource extends JsonResource
             "discount_price" => $discount,
             "conditions" => $this->conditions,
             "delivery_time" => $this->delivery_time,
-            "quantity_available" => $this->quantity > 0 ? $this->quantity : 0 ,
+            "quantity_available" => $this->quantity > 0 ? $this->quantity : 0,
             "sold_out" => $soldout ? $soldout : 0, 
             "colors" =>  $newColor,
             "duration" => $this->duration,

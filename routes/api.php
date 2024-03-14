@@ -94,6 +94,7 @@ Route::get('/services-home',  [App\Http\Controllers\Api\HomeController::class, '
 
 Route::get('/services',  [App\Http\Controllers\Api\ServiceController::class, 'Services']);
 Route::get('/products',  [App\Http\Controllers\Api\ProductController::class, 'Products']);
+Route::post('/check/quantity',  [App\Http\Controllers\Api\ProductController::class, 'CheckQuantity']);
 
 Route::get('/product-details/{slug}',  [App\Http\Controllers\Api\ProductController::class, 'ProductDetails']);
 Route::get('/service-details/{slug}',  [App\Http\Controllers\Api\ServiceController::class, 'ServiceDetails']);

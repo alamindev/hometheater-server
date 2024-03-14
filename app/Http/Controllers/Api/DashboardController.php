@@ -38,9 +38,33 @@ class DashboardController extends Controller
     public function RecentOrders($id)
     {  
         if ($id) {
-             $booking = Order::with('address','prices', 'quantity', 'services', 'images', 'questions', 'orderdate')->where('user_id', $id)->where('type', 0)->latest()->first();
-             $product = Order::with('address','prices', 'quantity', 'services', 'images', 'questions', 'orderdate')->where('user_id', $id)->where('type', 1)->latest()->first();
+            $latestRecord = Order::latest()->first();
+
+            $datas = Order::with('address','prices', 'quantity', 'services', 'images', 'questions', 'orderdate')
+                            ->where('created_at', $latestRecord->created_at)
+                            ->where('user_id', $id) 
+                            ->limit(2)
+                            ->get(); 
+                               
              $user = User::where('id', $id)->first();
+
+             $product = $booking = '';
+            
+            if(count($datas) > 0){
+                foreach($datas as $data){
+                    if($data->type === 0){
+                        $booking = $data;
+                        break;
+                    } 
+                }
+                foreach($datas as $data){
+                    if($data->type === 1){
+                        $product = $data;
+                        break;
+                    } 
+                }
+            }
+
             if ($booking || $product) {
                 return response()->json([
                     'success' => true,
@@ -51,7 +75,7 @@ class DashboardController extends Controller
             } 
         }
         return response()->json([
-            'success' => false,
+            'success' => true,
         ], 200);
     }
 }

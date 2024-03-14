@@ -52,7 +52,7 @@ Order details
                                         </div>
                                         @else 
                                         <div class="pl-2 option-content" id="approvedContent" >
-                                            <input type="url" required name="tracking_link" placeholder="Tracking link" class="form-control">
+                                            <input type="url" name="tracking_link" placeholder="Tracking link" class="form-control">
                                         </div>
                                         @endif
                                     @endif
