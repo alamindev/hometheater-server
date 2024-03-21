@@ -29,9 +29,9 @@ class OrderController extends Controller
 {
     public function finishedCheckout(Request $request)
     { 
- 
-      $carts = collect($request->carts); 
-
+   
+        $carts = collect($request->carts); 
+        $order_ids = [];
         $note = '';
         foreach ($carts as $cart) {
             $note .= $cart['title'] . ', ';
@@ -41,6 +41,7 @@ class OrderController extends Controller
         $order = Order::where('payment_id', $request->payment_id)->where('payment_id', '!=', null)->get(); 
             if(count($order) === 0){ 
                 $cartdatas = $request->cartdata;
+               
                 foreach($cartdatas as $key => $cartdata){
                     if($key === 'services'){
                         if(count($cartdata) > 0){
@@ -71,6 +72,7 @@ class OrderController extends Controller
                             $order->type = 0;
                             $order->user_id = $request->user_id;
                             $order->save(); 
+                            
                                 foreach ($cartdata as $cart) {
                                     $item = new OrderQuantity();
                                     $item->quantity = $cart['item'];
@@ -92,8 +94,8 @@ class OrderController extends Controller
                                 Answer($request,  $order->id);
                                 DateTime($request,  $order->id);
                                 OrderImage($request,  $order->id);
-                                OrderAddress($request,  $order->id);
-        
+                                OrderAddress($request,  $order->id); 
+                                array_push($order_ids, $order->id);
                             } 
                     }else{
                         if(count($cartdata) > 0){
@@ -156,22 +158,21 @@ class OrderController extends Controller
                                     Service::where('type', 1)->where('id', $cart['id'])->decrement('quantity', $cart['item']);
                                 }  
                                 OrderAddress($request,  $order->id);
-                                
+                                array_push($order_ids, $order->id);
                         }
                     }
                 }  
-
-
-                // $user = User::where('id', $request->user_id)->first();
-          
-                // $setting = Setting::first(); 
                 
-                // if ($setting) {
-                //    Mail::to($setting->contact_email)->send(new AdminNotificationNewOrder($request->cartdata, $request->datetime, $user));
-                // }
-                // Mail::to($user)->send(new UserNotification($request->cartdata, $request->datetime, $user));
+                $user = User::where('id', $request->user_id)->first();
+          
+                $setting = Setting::first(); 
+                
+                if ($setting) {
+                   Mail::to($setting->contact_email)->send(new AdminNotificationNewOrder($order_ids, $user));
+                }
+                Mail::to($user)->send(new UserNotification($order_ids, $user));
         
-        
+                // SERVICE already get next will show data
         
                 return response()->json([
                     'success' => true,

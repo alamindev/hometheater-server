@@ -1,26 +1,57 @@
 @component('mail::layout')
 {{-- Header --}}
 @slot('header')
-@component('mail::header', ['url' => 'https://hometheaterproz.com/users/booking/{{$order->id}}/details'])
+@component('mail::header', ['url' => 'https://hometheaterproz.com/users/dashboard'])
 <div style="display: flex; align-items: center;">
     <strong style="text-decoration: underline; font-size: 26px;">
-        Status: <span style="color: #4e81ee">Pending</span></strong>
+        Status: <span style="color: #4e81ee">Awaiting shipment</span></strong>
 </div>
 
 @endcomponent
 @endslot
 Dear <b>{{$user->first_name }} {{$user->last_name }}</b></br>, <br>
 
-<p>We received your request for: </p>
-<ul style="list-style: none">
-@foreach($services as $key => $service)
-<li><strong>{{ $key + 1 }}. {{$service->title}}</strong></li>
-@endforeach
-</ul>
-<br>
-Please login to your <a href="https://hometheaterproz.com/users/booking/{{$order->id}}/details" target="_blank" style="color: #4e81ee">dashboard</a> if you need to make any changes or upload images of task. You will receive another
-email once your appointment is confirmed by installer.
-<br>
+<p>Thank you for your order listed below.  </p>
+ 
+
+@if($service)
+<strong style="padding-bottom: 8px">1. Service appointment scheduled for: </strong> <br>
+@foreach($service->services as  $key=> $ser)
+@php
+      $serv = \App\Models\Service::where('id', $ser->service_id)->first();
+@endphp
+@if($serv)
+<strong>#{{$key+1}}</strong> {{ $serv->title }} 
+@endif
+@endforeach <br>  <br>
+<strong>Date Time: </strong>  
+<table style="padding: 0; margin: 0;">
+    @foreach($service->orderdate as $key=> $date)
+    <tr>
+        <td>Item #{{$key+1}}</td>
+        <td>:</td>
+        <td>
+            <strong>{{\Carbon\Carbon::parse($date->date)->format('d M Y')}}
+                {{ \Carbon\Carbon::parse($date->time)->format('g:i A') }}</strong>
+        </td>
+    </tr>
+    @endforeach
+</table>
+<br><br>
+@endif 
+@if($product)
+
+<strong style="padding-bottom: 8px">2. Product shipment: </strong> <br>
+@foreach($product->services as  $key=> $pro)
+@php
+      $prod = \App\Models\Service::where('id', $pro->service_id)->first();
+@endphp
+@if($prod)
+<strong>#{{$key+1}} </strong> {{ $prod->title }} 
+@endif
+@endforeach 
+Estimated arrival date-time:  <strong>{{ $product->delivery_time }}</strong>
+@endif
 <br>
 <br>
 Thanks, <br>
@@ -29,7 +60,7 @@ Thanks, <br>
     <br/>
 
 
-@component('mail::button', ['url' => 'https://hometheaterproz.com/users/booking/'. $order->id .'/details'])
+@component('mail::button', ['url' => 'https://hometheaterproz.com/users/dashboard'])
 Please login to see more details
 @endcomponent
 

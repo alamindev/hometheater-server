@@ -20,7 +20,7 @@ class ProductController extends Controller
     
     public function Products()
     {
-        $products =  Service::where('type', 1)->with('serviceImage')->get();
+        $products =  Service::where('type', 1)->with('serviceImage')->latest()->get();
         $service_header = ProductHeader::select('title', 'description')->first();
         
         return response()->json([

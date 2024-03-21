@@ -7,21 +7,22 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Order;
 
 class UserNotification extends Mailable
 {
     use Queueable, SerializesModels;
+    protected $order_ids; 
     protected $user;
-    protected $order;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($order, $user)
+    public function __construct($order_ids, $user)
     {
         $this->user = $user;
-        $this->order = $order;
+        $this->order_ids = $order_ids;  
     }
 
     /**
@@ -31,13 +32,22 @@ class UserNotification extends Mailable
      */
     public function build()
     {
-        $orderids = collect($this->order->services)->pluck('service_id');
-        $services =   Service::whereIn('id', $orderids)->select('id', 'title', 'basic_price', 'slug', 'duration')->get();
+        $service =  Order::with('orderdate','services')
+        ->whereIn('id', $this->order_ids) 
+        ->where('user_id',  $this->user['id'])->where('type', 0)->first();
 
+        $product =  Order::with('orderdate', 'services')
+        ->whereIn('id', $this->order_ids) 
+        ->where('user_id', $this->user['id'])->where('type', 1)->first();
 
+        
         return $this->markdown(
             'emails.user-notification',
-            ['order' => $this->order, 'services' => $services, 'user' => $this->user]
-        )->subject('New Booking Notification');
+            [    
+            'user' => $this->user, 
+            'product' => $product, 
+            'service' => $service, 
+            ]
+        )->subject('New Order Notification');
     }
 }
