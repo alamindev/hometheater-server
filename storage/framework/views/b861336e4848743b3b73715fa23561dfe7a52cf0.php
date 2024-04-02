@@ -1,14 +1,13 @@
-@extends('layouts.app')
-@section('title')
+<?php $__env->startSection('title'); ?>
 Custom css and js code
-@endsection
-@section('content')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
 <div class="content">
     <div class="row">
         <div class="col-lg-6">
-            <form action="{{ route('custom.css.store') }}" method="post" enctype="multipart/form-data"
+            <form action="<?php echo e(route('custom.css.store')); ?>" method="post" enctype="multipart/form-data"
                 class="form-horizontal">
-                @csrf
+                <?php echo csrf_field(); ?>
                 <div class="card">
                     <div class="card-header">
                         Write custom css
@@ -16,7 +15,7 @@ Custom css and js code
                     <div class="card-body card-block">
                         <div class="form-group">
                             <textarea name="css" cols="5" rows="15" id="css"
-                                class="form-control">  {{ !empty($css) ? $css : '' }}</textarea>
+                                class="form-control">  <?php echo e(!empty($css) ? $css : ''); ?></textarea>
                         </div>
                         <br>
                         <button type="submit" class="btn btn-info">Update</button>
@@ -25,9 +24,9 @@ Custom css and js code
             </form>
         </div>
         <div class="col-lg-6">
-            <form action="{{ route('custom.js.store') }}" method="post" enctype="multipart/form-data"
+            <form action="<?php echo e(route('custom.js.store')); ?>" method="post" enctype="multipart/form-data"
                 class="form-horizontal">
-                @csrf
+                <?php echo csrf_field(); ?>
                 <div class="card">
                     <div class="card-header">
                         Write custom js
@@ -35,7 +34,7 @@ Custom css and js code
                     <div class="card-body card-block">
                         <div class="form-group">
                             <textarea name="js" cols="5" rows="15" id="css"
-                                class="form-control">  {{ !empty($js) ? $js : '' }}</textarea>
+                                class="form-control">  <?php echo e(!empty($js) ? $js : ''); ?></textarea>
                         </div>
                         <br>
                         <button type="submit" class="btn btn-info">Update</button>
@@ -46,4 +45,6 @@ Custom css and js code
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH F:\hometheater-proz\server\resources\views/pages/custom-codes/custom-codes.blade.php ENDPATH**/ ?>

@@ -50,7 +50,7 @@
                     <a href="{{ route('pages') }}"><i class="menu-icon fa fa-address-book-o "></i> Pages </a>
                 </li>
                 <li class="{{ (Route::is('contacts') || Route::is('page.view')) ? 'active' : '' }}">
-                    <a href="{{ route('contacts') }}"><i class="menu-icon fa fa-address-book "></i> Contacts </a>
+                    <a href="{{ route('contacts') }}"><i class="menu-icon fa fa-address-book "></i> Messages </a>
                 </li>
                 <li class="{{ Route::is('blogCategory') ? 'active' : '' }}">
                     <a href="{{ route('blogCategory') }}"><i class="menu-icon fas fa-list"></i> Blog Categories </a>

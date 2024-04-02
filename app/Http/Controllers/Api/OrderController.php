@@ -206,7 +206,7 @@ class OrderController extends Controller
                 ]); 
                
               $intents =  $stripe->paymentIntents->create([
-                    'automatic_payment_methods' => ['enabled' => true, 'allow_redirects' => 'never'],
+                    'automatic_payment_methods' => ['enabled' => true],
                     'amount' => $request->grand_total * 100,
                     'currency' => 'usd',
                     'customer' => $customer->id,

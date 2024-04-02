@@ -117,6 +117,9 @@ Route::post('/page/uploads',  [App\Http\Controllers\PageController::class, 'uplo
 Route::get('/page/file_browser', [App\Http\Controllers\PageController::class, 'fileBrowser']);
 
 Route::get('/contacts', [App\Http\Controllers\ContactController::class, 'index'])->name('contacts');
+// Route::get('/contact/create', [App\Http\Controllers\PageController::class, 'create'])->name('contact.create');
+// Route::post('/contact/store', [App\Http\Controllers\PageController::class, 'store'])->name('contact.store');
+// Route::get('/contact/edit/{id}', [App\Http\Controllers\PageController::class, 'edit'])->name('contact.edit');
 Route::get('/contact/view/{id}', [App\Http\Controllers\ContactController::class, 'show'])->name('contact.show');
 Route::delete('/contact/destroy/{id}', [App\Http\Controllers\ContactController::class, 'destroy'])->name('contact.destroy');
 

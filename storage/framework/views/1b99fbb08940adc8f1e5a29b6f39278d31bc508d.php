@@ -3,8 +3,7 @@
 <?php $__env->slot('header'); ?>
 <?php $__env->startComponent('mail::header', ['url' => 'https://hometheaterproz.com/users/dashboard']); ?>
 <div style="display: flex; align-items: center;">
-    <strong style="text-decoration: underline; font-size: 26px;">
-        Status: <span style="color: #4e81ee">Awaiting shipment</span></strong>
+    <strong style="text-decoration: underline; font-size: 26px;">Order Details</strong>
 </div>
 
 <?php echo $__env->renderComponent(); ?>
