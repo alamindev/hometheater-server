@@ -14,12 +14,23 @@ Setting
                 <input type="hidden" name="id" value="{{ $setting ? $setting->id : '' }}"/>
                 <div class="row form-group">
                     <div class="col col-md-3">
-                        <label for="site_logo" class=" form-control-label">Google Analytics id</label>
+                        <label for="site_logo" class=" form-control-label">Google Analytics</label>
                     </div>
                     <div class="col-12 col-md-9">
                         <input type="text" id="analytics_id" name="analytics_id" class="form-control" value="{{ $setting ? $setting->analytics_id : old('analytics_id') }}" >
                         @if($errors->has('analytics_id'))
                             <div class="text-danger">{{ $errors->first('analytics_id') }}</div>
+                        @endif
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col col-md-3">
+                        <label for="site_logo" class=" form-control-label">Google Tag Manager</label>
+                    </div>
+                    <div class="col-12 col-md-9">
+                        <input type="text" id="tag_manager" name="tag_manager" class="form-control" value="{{ $setting ? $setting->tag_manager : old('tag_manager') }}" >
+                        @if($errors->has('tag_manager'))
+                            <div class="text-danger">{{ $errors->first('tag_manager') }}</div>
                         @endif
                     </div>
                 </div>

@@ -24,6 +24,17 @@ Setting
                 </div>
                 <div class="row form-group">
                     <div class="col col-md-3">
+                        <label for="site_logo" class=" form-control-label">Google Analytics id</label>
+                    </div>
+                    <div class="col-12 col-md-9">
+                        <input type="text" id="analytics_id" name="analytics_id" class="form-control" value="<?php echo e($setting ? $setting->analytics_id : old('analytics_id')); ?>" >
+                        <?php if($errors->has('analytics_id')): ?>
+                            <div class="text-danger"><?php echo e($errors->first('analytics_id')); ?></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col col-md-3">
                         <label for="site_logo" class=" form-control-label">Header Logo title</label>
                     </div>
                     <div class="col-12 col-md-9">

@@ -21,7 +21,12 @@ class DashboardController extends Controller
             $total_span = 0;
             $local = Order::where('status', 'complete')->where('payment', 'local')->where('user_id', $id)->sum('price');
             $online = Order::where('user_id', $id)->where('payment', 'online')->sum('price');
-            $total_span = $local + $online;
+
+            $localAddons = Order::where('status', 'complete')->where('payment', 'local')->where('user_id', $id)->sum('addon_price');
+            $onlineAddons = Order::where('user_id', $id)->where('payment', 'online')->sum('addon_price');
+ 
+
+            $total_span = $local + $online + $localAddons + $onlineAddons;
 
             return response()->json([
                 'success' => true, 

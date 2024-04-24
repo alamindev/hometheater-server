@@ -41,6 +41,7 @@ class SettingController extends Controller
             $setting->taxes = $request->taxes;
             $setting->site_title = $request->site_title;
             $setting->analytics_id = $request->analytics_id;
+            $setting->tag_manager = $request->tag_manager;
             $setting->site_logo = $site_logo !== null ? $site_logo : $setting->site_logo;
             $setting->favicon = $fav_icon !== null ? $fav_icon : $setting->favicon;
             $setting->footer_logo = $footer_logo !== null ? $footer_logo : $setting->footer_logo;
@@ -56,6 +57,7 @@ class SettingController extends Controller
             $setting->site_logo = $site_logo; 
             $setting->site_title = $request->site_title;
             $setting->analytics_id = $request->analytics_id;
+            $setting->tag_manager = $request->tag_manager;
             $setting->favicon = $fav_icon;
             $setting->copyright = $request->copyright;
             $setting->taxes = $request->taxes;

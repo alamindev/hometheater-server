@@ -42,11 +42,11 @@ class AdminStatus extends Mailable
                 'services' => $services,
             ])->subject('User update booking');
         } else {
-            return $this->markdown('emails.admin-status', [
-                'user' => $this->user,
-                'order' => $this->order,
-                'services' => $services,
-            ])->subject('New Booking Notification');
+            // return $this->markdown('emails.admin-status', [
+            //     'user' => $this->user,
+            //     'order' => $this->order,
+            //     'services' => $services,
+            // ])->subject('New Booking Notification');
         }
     }
 }
